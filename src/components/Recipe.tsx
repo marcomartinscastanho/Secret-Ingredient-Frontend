@@ -57,6 +57,7 @@ export class Recipe extends Component<Props, State> {
       return (
         <Fragment>
           <h2>{recipe.title}</h2>
+
           <div className="float-start">
             <small>{recipe.portions} porções</small>
           </div>
@@ -98,8 +99,8 @@ export class Recipe extends Component<Props, State> {
           <table className="table table-compact table-striped">
             <thead></thead>
             <tbody>
-              {recipe.ingredients.map((recipeIngredient) => (
-                <tr>
+              {recipe.ingredients.map((recipeIngredient, index) => (
+                <tr key={index}>
                   <td>
                     {recipeIngredient.quantity} de{" "}
                     <strong>{recipeIngredient.ingredient.name}</strong>{" "}
@@ -115,7 +116,7 @@ export class Recipe extends Component<Props, State> {
             <thead></thead>
             <tbody>
               {recipe.preparationSteps.map((step, index) => (
-                <tr>
+                <tr key={index}>
                   <td>{index + 1}</td>
                   <td>{step}</td>
                 </tr>

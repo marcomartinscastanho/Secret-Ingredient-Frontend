@@ -9,7 +9,7 @@ interface State {
 }
 
 export class RecipesPage extends Component<{}, State> {
-  state = { recipes: [], isLoaded: false, error: "" };
+  state: State = { recipes: [], isLoaded: false, error: "" };
 
   componentDidMount() {
     fetch("http://localhost:19061/v1/recipes")
@@ -38,7 +38,7 @@ export class RecipesPage extends Component<{}, State> {
         <Fragment>
           <h2>Receitas</h2>
           <ul>
-            {recipes.map((recipe: RecipeDto) => (
+            {recipes.map((recipe) => (
               <li key={recipe.id}>
                 <Link to={`/recipes/${recipe.id}`}>{recipe.title}</Link>
               </li>
