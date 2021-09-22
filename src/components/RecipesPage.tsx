@@ -1,10 +1,6 @@
 import React, { Component, Fragment } from "react";
 import { Link } from "react-router-dom";
-
-type RecipeDto = {
-  id: string;
-  title: string;
-};
+import { RecipeDto } from "../types/RecipeDto.type";
 
 export class RecipesPage extends Component {
   state = { recipes: [] };

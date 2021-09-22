@@ -10,6 +10,7 @@ import { Admin } from "./components/Admin";
 import { Home } from "./components/Home";
 import { Ingredient } from "./components/Ingredient";
 import { IngredientsPage } from "./components/IngredientsPage";
+import { Recipe } from "./components/Recipe";
 import { RecipesPage } from "./components/RecipesPage";
 import { TagsPage } from "./components/TagsPage";
 
@@ -45,9 +46,7 @@ export function App() {
           </div>
           <div className="col-md-10">
             <Switch>
-              <Route path="/recipes/:id">
-                <Recipe />
-              </Route>
+              <Route path="/recipes/:id" component={Recipe} />
               <Route path="/recipes">
                 <RecipesPage />
               </Route>
@@ -74,12 +73,6 @@ export function App() {
       </div>
     </Router>
   );
-}
-
-function Recipe() {
-  let { id } = useParams<{ id: string }>();
-
-  return <h2>Receita {id}</h2>;
 }
 
 export default App;
