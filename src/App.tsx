@@ -1,5 +1,11 @@
 import React, { Fragment } from "react";
-import { HashRouter as Router, Switch, Route, Link } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+  useParams,
+} from "react-router-dom";
 import { Home } from "./components/Home";
 import { Ingredients } from "./components/Ingredients";
 import { Recipes } from "./components/Recipes";
@@ -34,6 +40,9 @@ export function App() {
           </div>
           <div className="col-md-10">
             <Switch>
+              <Route path="/recipes/:id">
+                <Recipe />
+              </Route>
               <Route path="/recipes">
                 <Recipes />
               </Route>
@@ -52,6 +61,12 @@ export function App() {
       </div>
     </Router>
   );
+}
+
+function Recipe() {
+  let { id } = useParams<{ id: string }>();
+
+  return <h2>Receita {id}</h2>;
 }
 
 export default App;

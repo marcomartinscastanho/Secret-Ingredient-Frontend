@@ -1,4 +1,5 @@
 import React, { Component, Fragment } from "react";
+import { Link } from "react-router-dom";
 
 type RecipeDto = {
   id: string;
@@ -24,7 +25,9 @@ export class Recipes extends Component {
         <h2>Receitas</h2>
         <ul>
           {this.state.recipes.map((recipe: RecipeDto) => (
-            <li key={recipe.id}>{recipe.title}</li>
+            <li key={recipe.id}>
+              <Link to={`/recipes/${recipe.id}`}>{recipe.title}</Link>
+            </li>
           ))}
         </ul>
       </Fragment>
