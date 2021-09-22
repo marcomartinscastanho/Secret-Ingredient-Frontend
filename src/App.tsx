@@ -1,5 +1,6 @@
 import React, { Fragment } from "react";
 import { HashRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { Recipes } from "./components/Recipes";
 
 export function App() {
   return (
@@ -46,10 +47,6 @@ export function App() {
 
 function Home() {
   return <h2>Início</h2>;
-}
-
-function Recipes() {
-  return <h2>Receitas</h2>;
 }
 
 function Admin() {
