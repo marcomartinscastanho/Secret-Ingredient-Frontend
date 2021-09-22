@@ -1,6 +1,9 @@
 import React, { Fragment } from "react";
 import { HashRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { Home } from "./components/Home";
+import { Ingredients } from "./components/Ingredients";
 import { Recipes } from "./components/Recipes";
+import { Tags } from "./components/Tags";
 
 export function App() {
   return (
@@ -21,7 +24,10 @@ export function App() {
                   <Link to="/recipes">Receitas</Link>
                 </li>
                 <li className="list-group-item">
-                  <Link to="/admin">Gerir Catálogo</Link>
+                  <Link to="/ingredients">Ingredientes</Link>
+                </li>
+                <li className="list-group-item">
+                  <Link to="/tags">Etiquetas</Link>
                 </li>
               </ul>
             </nav>
@@ -31,8 +37,11 @@ export function App() {
               <Route path="/recipes">
                 <Recipes />
               </Route>
-              <Route path="/admin">
-                <Admin />
+              <Route path="/ingredients">
+                <Ingredients />
+              </Route>
+              <Route path="/tags">
+                <Tags />
               </Route>
               <Route path="/">
                 <Home />
@@ -43,14 +52,6 @@ export function App() {
       </div>
     </Router>
   );
-}
-
-function Home() {
-  return <h2>Início</h2>;
-}
-
-function Admin() {
-  return <h2>Gerir Catálogo</h2>;
 }
 
 export default App;
