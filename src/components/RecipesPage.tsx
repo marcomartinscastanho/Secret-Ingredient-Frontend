@@ -30,7 +30,7 @@ export class RecipesPage extends Component<{}, State> {
   render() {
     const { recipes, isLoaded, error } = this.state;
     if (error) {
-      return <div>Error: {error}</div>;
+      return <div>Erro: {error}</div>;
     } else if (!isLoaded) {
       return <p>Carregando...</p>;
     } else {

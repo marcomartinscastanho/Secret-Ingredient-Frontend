@@ -1,9 +1,13 @@
 export type RecipeDto = {
   id: string;
 
+  title: string;
+
+  portions: number;
+
   tags: TagDto[];
 
-  title: string;
+  description: string;
 
   preparationTime: number;
 
