@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from "react";
 import { RouteComponentProps, RouteProps } from "react-router";
-import { RecipeDto } from "../types/RecipeDto.type";
+import { RecipeDto } from "../types/dtos.type";
 
 type Props = RouteComponentProps<{
   id: string;
@@ -8,23 +8,35 @@ type Props = RouteComponentProps<{
 
 interface State {
   recipe: RecipeDto;
+  isLoaded: boolean;
 }
 
 export class Recipe extends Component<Props, State> {
-  //   state = {
-  //     recipe: {
-  //       id: "",
-  //       title: "",
-  //       cookingTime: 0,
-  //     },
-  //   };
+  state: State = {
+    recipe: {
+      id: "",
+      title: "",
+      tags: [],
+      cookingTime: 0,
+      preparationTime: 0,
+      ingredients: [],
+      preparationSteps: [],
+      user: "",
+    },
+    isLoaded: false,
+  };
 
   componentDidMount() {
     this.setState({
       recipe: {
         id: this.props.match.params.id,
         title: "Some recipe",
+        tags: [],
         cookingTime: 45,
+        preparationTime: 10,
+        ingredients: [],
+        preparationSteps: [],
+        user: "",
       },
     });
   }
@@ -44,7 +56,7 @@ export class Recipe extends Component<Props, State> {
             </tr>
             <tr>
               <td>
-                <strong>Cooking Time:</strong>
+                <strong>Tempo de cozedura:</strong>
               </td>
               <td>{this.state.recipe.cookingTime}</td>
             </tr>
