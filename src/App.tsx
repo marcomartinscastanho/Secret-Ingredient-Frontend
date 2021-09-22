@@ -6,10 +6,12 @@ import {
   Link,
   useParams,
 } from "react-router-dom";
+import { Admin } from "./components/Admin";
 import { Home } from "./components/Home";
-import { Ingredients } from "./components/Ingredients";
-import { Recipes } from "./components/Recipes";
-import { Tags } from "./components/Tags";
+import { Ingredient } from "./components/Ingredient";
+import { IngredientsPage } from "./components/IngredientsPage";
+import { RecipesPage } from "./components/RecipesPage";
+import { TagsPage } from "./components/TagsPage";
 
 export function App() {
   return (
@@ -35,6 +37,9 @@ export function App() {
                 <li className="list-group-item">
                   <Link to="/tags">Etiquetas</Link>
                 </li>
+                <li className="list-group-item">
+                  <Link to="/admin">Admin Area</Link>
+                </li>
               </ul>
             </nav>
           </div>
@@ -44,13 +49,21 @@ export function App() {
                 <Recipe />
               </Route>
               <Route path="/recipes">
-                <Recipes />
+                <RecipesPage />
               </Route>
-              <Route path="/ingredients">
-                <Ingredients />
+              <Route exact path="/ingredients">
+                <IngredientsPage />
               </Route>
+              <Route
+                exact
+                path="/ingredients/:id"
+                render={(props) => <Ingredient {...props} />}
+              />
               <Route path="/tags">
-                <Tags />
+                <TagsPage />
+              </Route>
+              <Route path="/admin">
+                <Admin />
               </Route>
               <Route path="/">
                 <Home />

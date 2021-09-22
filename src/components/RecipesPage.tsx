@@ -6,7 +6,7 @@ type RecipeDto = {
   title: string;
 };
 
-export class Recipes extends Component {
+export class RecipesPage extends Component {
   state = { recipes: [] };
 
   componentDidMount() {
@@ -35,4 +35,4 @@ export class Recipes extends Component {
   }
 }
 
-export default Recipes;
+export default RecipesPage;
