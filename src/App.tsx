@@ -6,6 +6,7 @@ import { Ingredient } from "./components/Ingredient";
 import { IngredientsPage } from "./components/IngredientsPage";
 import { Recipe } from "./components/Recipe";
 import { RecipesPage } from "./components/RecipesPage";
+import Tag from "./components/Tag";
 import { TagsPage } from "./components/TagsPage";
 
 export function App() {
@@ -44,13 +45,17 @@ export function App() {
               <Route path="/recipes">
                 <RecipesPage />
               </Route>
+
+              <Route path="/ingredients/:id" component={Ingredient} />
               <Route exact path="/ingredients">
                 <IngredientsPage />
               </Route>
-              <Route exact path="/ingredients/:id" render={(props) => <Ingredient {...props} />} />
+
+              <Route path="/tags/:id" component={Tag} />
               <Route path="/tags">
                 <TagsPage />
               </Route>
+
               <Route path="/admin">
                 <Admin />
               </Route>

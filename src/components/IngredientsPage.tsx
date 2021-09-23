@@ -38,13 +38,16 @@ export class IngredientsPage extends Component<{}, State> {
         <Fragment>
           <h2>Ingredientes</h2>
 
-          <ul>
+          <div className="list-group">
             {ingredients.map((ingredient) => (
-              <li key={ingredient.id}>
-                <Link to={`/tags/${ingredient.id}`}>{ingredient.name}</Link>
-              </li>
+              <Link
+                to={`/ingredients/${ingredient.id}`}
+                className="list-group-item list-group-item-action"
+              >
+                {ingredient.name}
+              </Link>
             ))}
-          </ul>
+          </div>
         </Fragment>
       );
     }

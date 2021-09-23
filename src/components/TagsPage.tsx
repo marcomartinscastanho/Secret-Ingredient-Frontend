@@ -38,13 +38,13 @@ export class TagsPage extends Component<{}, State> {
         <Fragment>
           <h2>Etiquetas</h2>
 
-          <ul>
+          <div className="list-group">
             {tags.map((tag) => (
-              <li key={tag.id}>
-                <Link to={`/tags/${tag.id}`}>{tag.name}</Link>
-              </li>
+              <Link to={`/tags/${tag.id}`} className="list-group-item list-group-item-action">
+                {tag.name}
+              </Link>
             ))}
-          </ul>
+          </div>
         </Fragment>
       );
     }
