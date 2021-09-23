@@ -1,11 +1,5 @@
-import React, { Fragment } from "react";
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link,
-  useParams,
-} from "react-router-dom";
+import React from "react";
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import { Admin } from "./components/Admin";
 import { Home } from "./components/Home";
 import { Ingredient } from "./components/Ingredient";
@@ -53,11 +47,7 @@ export function App() {
               <Route exact path="/ingredients">
                 <IngredientsPage />
               </Route>
-              <Route
-                exact
-                path="/ingredients/:id"
-                render={(props) => <Ingredient {...props} />}
-              />
+              <Route exact path="/ingredients/:id" render={(props) => <Ingredient {...props} />} />
               <Route path="/tags">
                 <TagsPage />
               </Route>

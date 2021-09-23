@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from "react";
-import { RouteComponentProps, RouteProps } from "react-router";
+import { RouteComponentProps } from "react-router";
 import { RecipeDto } from "../types/dtos.type";
 
 type Props = RouteComponentProps<{
