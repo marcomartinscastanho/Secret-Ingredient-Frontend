@@ -3,9 +3,9 @@ import { RouteComponentProps } from "react-router";
 import { Link } from "react-router-dom";
 import { RecipeDto } from "../types/dtos.type";
 
-type Props = RouteComponentProps<{
+interface Props {
   id: string;
-}>;
+}
 
 interface State {
   recipes: RecipeDto[];
@@ -13,7 +13,7 @@ interface State {
   error: string;
 }
 
-export class Tag extends Component<Props, State> {
+export class Tag extends Component<RouteComponentProps<Props>, State> {
   state: State = { recipes: [], isLoaded: false, error: "" };
 
   componentDidMount() {
