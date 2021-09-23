@@ -41,6 +41,7 @@ export class IngredientsPage extends Component<{}, State> {
           <div className="list-group">
             {ingredients.map((ingredient) => (
               <Link
+                key={ingredient.id}
                 to={`/ingredients/${ingredient.id}`}
                 className="list-group-item list-group-item-action"
               >

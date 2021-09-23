@@ -40,7 +40,11 @@ export class TagsPage extends Component<{}, State> {
 
           <div className="list-group">
             {tags.map((tag) => (
-              <Link to={`/tags/${tag.id}`} className="list-group-item list-group-item-action">
+              <Link
+                key={tag.id}
+                to={`/tags/${tag.id}`}
+                className="list-group-item list-group-item-action"
+              >
                 {tag.name}
               </Link>
             ))}
