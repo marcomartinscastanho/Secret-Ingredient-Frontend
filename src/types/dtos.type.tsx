@@ -41,5 +41,5 @@ export type IngredientDto = {
 
   name: string;
 
-  popularity: number;
+  popularity?: number;
 };
