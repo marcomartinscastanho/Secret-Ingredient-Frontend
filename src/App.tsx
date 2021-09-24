@@ -1,12 +1,13 @@
 import React from "react";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import { Admin } from "./components/Admin";
+import { EditRecipe } from "./components/EditRecipe";
 import { Home } from "./components/Home";
 import { Ingredient } from "./components/Ingredient";
 import { IngredientsPage } from "./components/IngredientsPage";
 import { Recipe } from "./components/Recipe";
 import { RecipesPage } from "./components/RecipesPage";
-import Tag from "./components/Tag";
+import { Tag } from "./components/Tag";
 import { TagsPage } from "./components/TagsPage";
 
 export function App() {
@@ -34,6 +35,9 @@ export function App() {
                   <Link to="/tags">Etiquetas</Link>
                 </li>
                 <li className="list-group-item">
+                  <Link to="/recipes/new">Nova Receita</Link>
+                </li>
+                <li className="list-group-item">
                   <Link to="/admin">Admin Area</Link>
                 </li>
               </ul>
@@ -41,6 +45,7 @@ export function App() {
           </div>
           <div className="col-md-10">
             <Switch>
+              <Route path="/recipes/new" component={EditRecipe} />
               <Route path="/recipes/:id" component={Recipe} />
               <Route path="/recipes">
                 <RecipesPage />
