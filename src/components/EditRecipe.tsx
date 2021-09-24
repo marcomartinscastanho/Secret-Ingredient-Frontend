@@ -98,7 +98,7 @@ export class EditRecipe extends Component {
                     <option>5</option>
                   </select>
                 </div>
-                <div className="col-sm-5">
+                <div className="col-sm-4">
                   <input
                     type="text"
                     className="form-control"
@@ -107,13 +107,22 @@ export class EditRecipe extends Component {
                     value={recipeIngredient.specification}
                   />
                 </div>
+                {index < recipe.ingredients.length - 1 && (
+                  <div className="col-sm-1 text-end">
+                    <button className="btn btn-primary">
+                      <strong>-</strong>
+                    </button>
+                  </div>
+                )}
+                {index === recipe.ingredients.length - 1 && (
+                  <div className="col-sm-1 text-end">
+                    <button className="btn btn-primary">
+                      <strong>+</strong>
+                    </button>
+                  </div>
+                )}
               </div>
             ))}
-            <div className="text-end">
-              <button className="btn btn-primary">
-                <strong>+</strong>
-              </button>
-            </div>
           </div>
 
           <div className="mb-3">
@@ -125,7 +134,7 @@ export class EditRecipe extends Component {
                 <div className="col-sm-1 d-flex align-items-center justify-content-center">
                   {index + 1}
                 </div>
-                <div className="col-sm-11">
+                <div className="col-sm-10">
                   <textarea
                     className="form-control"
                     id={`preparation${index}`}
@@ -134,13 +143,22 @@ export class EditRecipe extends Component {
                     value={preparationStep}
                   />
                 </div>
+                {index < recipe.preparationSteps.length - 1 && (
+                  <div className="col-sm-1 d-flex align-items-center justify-content-end">
+                    <button className="btn btn-primary">
+                      <strong>-</strong>
+                    </button>
+                  </div>
+                )}
+                {index === recipe.preparationSteps.length - 1 && (
+                  <div className="col-sm-1 d-flex align-items-center justify-content-end">
+                    <button className="btn btn-primary">
+                      <strong>+</strong>
+                    </button>
+                  </div>
+                )}
               </div>
             ))}
-            <div className="text-end">
-              <button className="btn btn-primary">
-                <strong>+</strong>
-              </button>
-            </div>
           </div>
 
           <div className="mb-3">
