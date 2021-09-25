@@ -1,11 +1,33 @@
-export type RecipeDto = {
+export type RecipeInputDto = {
+  id?: string;
+
+  title: string;
+
+  portions?: number;
+
+  tags: string[];
+
+  description: string;
+
+  preparationTime?: number;
+
+  cookingTime?: number;
+
+  ingredients: RecipeIngredientInputDto[];
+
+  preparationSteps: string[];
+
+  user?: string;
+};
+
+export type RecipeOutputDto = {
   id: string;
 
   title: string;
 
   portions: number;
 
-  tags: TagDto[];
+  tags: TagOutputDto[];
 
   description: string;
 
@@ -13,30 +35,46 @@ export type RecipeDto = {
 
   cookingTime: number;
 
-  ingredients: RecipeIngredientDto[];
+  ingredients: RecipeIngredientOutputDto[];
 
   preparationSteps: string[];
 
   user: string;
 };
 
-export type TagDto = {
+export type TagInputDto = {
+  name: string;
+};
+
+export type TagOutputDto = {
   id: string;
 
   name: string;
 
-  popularity: number;
+  popularity?: number;
 };
 
-export type RecipeIngredientDto = {
+export type RecipeIngredientInputDto = {
   quantity: string;
 
-  ingredient: IngredientDto;
+  ingredient: string;
 
   specification: string;
 };
 
-export type IngredientDto = {
+export type RecipeIngredientOutputDto = {
+  quantity: string;
+
+  ingredient: IngredientOutputDto;
+
+  specification: string;
+};
+
+export type IngredientInputDto = {
+  name: string;
+};
+
+export type IngredientOutputDto = {
   id: string;
 
   name: string;

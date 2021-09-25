@@ -1,20 +1,27 @@
 import React, { Component, Fragment } from "react";
 import { RouteComponentProps } from "react-router";
-import { RecipeDto, RecipeIngredientDto } from "../types/dtos.type";
+import {
+  IngredientOutputDto,
+  RecipeIngredientInputDto,
+  RecipeInputDto,
+  TagOutputDto,
+} from "../types/dtos.type";
 import "./EditRecipe.css";
 
 interface State {
-  recipe: RecipeDto;
+  recipe: RecipeInputDto;
+  ingredients: IngredientOutputDto[];
+  tags: TagOutputDto[];
   isLoaded: boolean;
   error: string;
 }
 
-const newRecipeIngredient = (): RecipeIngredientDto => {
-  return Object.create({
-    ingredient: { id: "", name: "", popularity: 0 },
+const newRecipeIngredient = (): RecipeIngredientInputDto => {
+  return {
+    ingredient: "",
     quantity: "",
     specification: "",
-  });
+  };
 };
 
 export class EditRecipe extends Component<RouteComponentProps, State> {
@@ -23,7 +30,6 @@ export class EditRecipe extends Component<RouteComponentProps, State> {
 
     this.state = {
       recipe: {
-        id: "",
         title: "",
         portions: 0,
         tags: [],
@@ -32,8 +38,9 @@ export class EditRecipe extends Component<RouteComponentProps, State> {
         preparationTime: 0,
         ingredients: [newRecipeIngredient()],
         preparationSteps: [""],
-        user: "",
       },
+      ingredients: [],
+      tags: [],
       isLoaded: false,
       error: "",
     };
@@ -42,16 +49,19 @@ export class EditRecipe extends Component<RouteComponentProps, State> {
 
     this.handleAddIngredient = this.handleAddIngredient.bind(this);
     this.handleRemoveIngredient = this.handleRemoveIngredient.bind(this);
+    this.handleChangeIngredient = this.handleChangeIngredient.bind(this);
 
     this.handleAddPreparationStep = this.handleAddPreparationStep.bind(this);
     this.handleRemovePreparationStep = this.handleRemovePreparationStep.bind(this);
+    this.handleChangePreparationStep = this.handleChangePreparationStep.bind(this);
+
+    this.handleChangeTags = this.handleChangeTags.bind(this);
 
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   handleChange = (event: any) => {
-    const value = event.target.value;
-    const name = event.target.name;
+    const { name, value } = event.target;
 
     this.setState((prevState) => ({
       recipe: { ...prevState.recipe, [name]: value },
@@ -63,11 +73,10 @@ export class EditRecipe extends Component<RouteComponentProps, State> {
       (recipeIngredient) => !recipeIngredient.quantity || !recipeIngredient.ingredient
     );
 
-    // TODO: uncomment this once onIngredientChange is done
-    // if (thereAreEmptyIngredients) {
-    //   // TODO: handle error: can't add more ingredients while there are empty ingredients
-    //   return;
-    // }
+    if (thereAreEmptyIngredients) {
+      // TODO: handle error: can't add more ingredients while there are empty ingredients
+      return;
+    }
 
     this.setState((prevState) => ({
       recipe: {
@@ -90,14 +99,24 @@ export class EditRecipe extends Component<RouteComponentProps, State> {
     });
   };
 
+  handleChangeIngredient = (event: any, index: number) => {
+    const { name, value } = event.target;
+
+    const updatedRecipe = { ...this.state.recipe };
+    const updatedIngredients = [...updatedRecipe.ingredients];
+    const updatedIngredient = updatedIngredients[index];
+    updatedIngredients[index] = { ...updatedIngredient, [name]: value };
+    updatedRecipe.ingredients = updatedIngredients;
+    this.setState({ recipe: updatedRecipe });
+  };
+
   handleAddPreparationStep = () => {
     const thereAreEmptySteps = this.state.recipe.preparationSteps.some((step) => step.length === 0);
 
-    // TODO: uncomment this once onStepChange is done
-    // if (thereAreEmptySteps) {
-    //   // TODO: handle error: can't add more preparationSteps while there are empty preparationSteps
-    //   return;
-    // }
+    if (thereAreEmptySteps) {
+      // TODO: handle error: can't add more preparationSteps while there are empty preparationSteps
+      return;
+    }
 
     this.setState((prevState) => ({
       recipe: {
@@ -120,13 +139,59 @@ export class EditRecipe extends Component<RouteComponentProps, State> {
     });
   };
 
+  handleChangePreparationStep = (event: any, index: number) => {
+    const updatedRecipe = { ...this.state.recipe };
+    const updatedSteps = [...updatedRecipe.preparationSteps];
+    updatedSteps[index] = event.target.value;
+    updatedRecipe.preparationSteps = updatedSteps;
+    this.setState({ recipe: updatedRecipe });
+  };
+
+  handleChangeTags = (event: any) => {
+    const selected = [...event.target.options].filter((o) => o.selected).map((o) => o.value);
+
+    this.setState((prevState) => ({
+      recipe: { ...prevState.recipe, tags: selected },
+    }));
+  };
+
   handleSubmit = (event: any) => {
     console.log("Form was submitted");
+
+    //TODO: prune empty recipeIngredients and empty preparationSteps
 
     event.preventDefault();
   };
 
-  componentDidMount() {}
+  componentDidMount() {
+    // get list of ingredients
+    fetch("http://localhost:19061/v1/ingredients")
+      .then((response) => {
+        if (response.status !== 200) {
+          this.setState({ error: "Invalid response code: " + response.status });
+        }
+        return response.json();
+      })
+      .then((jsonRes: { data: IngredientOutputDto[] }) => {
+        this.setState({
+          ingredients: jsonRes.data,
+        });
+      });
+
+    // get list of tags
+    fetch("http://localhost:19061/v1/tags")
+      .then((response) => {
+        if (response.status !== 200) {
+          this.setState({ error: "Invalid response code: " + response.status });
+        }
+        return response.json();
+      })
+      .then((jsonRes: { data: TagOutputDto[] }) => {
+        this.setState({
+          tags: jsonRes.data,
+        });
+      });
+  }
 
   render() {
     const { recipe } = this.state;
@@ -180,8 +245,11 @@ export class EditRecipe extends Component<RouteComponentProps, State> {
                     id={`ingredient.quantity-${index}`}
                     name={`quantity`}
                     key={index}
+                    placeholder="quantidade"
                     value={recipeIngredient.quantity}
-                    onChange={this.handleChange}
+                    onChange={(event) => {
+                      this.handleChangeIngredient(event, index);
+                    }}
                   />
                 </div>
                 <div className="col-sm-1 d-flex align-items-center justify-content-center">de</div>
@@ -189,15 +257,20 @@ export class EditRecipe extends Component<RouteComponentProps, State> {
                   <select
                     className="form-select"
                     id={`ingredient.ingredient-${index}`}
-                    name={`ingredient.ingredient-${index}`}
+                    name={`ingredient`}
                     key={index}
-                    value={recipeIngredient.ingredient.id}
+                    value={recipeIngredient.ingredient}
+                    onChange={(event) => {
+                      this.handleChangeIngredient(event, index);
+                    }}
                   >
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
+                    <option>Seleccione o Ingrediente</option>
+                    {this.state.ingredients.map((ingredient) => (
+                      <option value={ingredient.id}>{ingredient.name}</option>
+                    ))}
+                    <option value={-1} style={{ backgroundColor: "lightblue" }}>
+                      Criar novo Ingrediente...
+                    </option>
                   </select>
                 </div>
                 <div className="col-sm-4">
@@ -206,8 +279,12 @@ export class EditRecipe extends Component<RouteComponentProps, State> {
                     className="form-control"
                     id={`ingredient.specification-${index}`}
                     name={`specification`}
+                    placeholder="detalhes (opcional)"
                     key={index}
                     value={recipeIngredient.specification}
+                    onChange={(event) => {
+                      this.handleChangeIngredient(event, index);
+                    }}
                   />
                 </div>
                 {index < recipe.ingredients.length - 1 && (
@@ -248,6 +325,9 @@ export class EditRecipe extends Component<RouteComponentProps, State> {
                     rows={2}
                     key={index}
                     value={preparationStep}
+                    onChange={(event) => {
+                      this.handleChangePreparationStep(event, index);
+                    }}
                   />
                 </div>
                 {index < recipe.preparationSteps.length - 1 && (
@@ -323,16 +403,26 @@ export class EditRecipe extends Component<RouteComponentProps, State> {
             <label htmlFor="tags" className="form-label">
               Etiquetas
             </label>
-            <select multiple className="form-select" id="tags" name="tags">
-              <option>1</option>
-              <option>2</option>
-              <option>3</option>
-              <option>4</option>
-              <option>5</option>
-              <option>6</option>
-              <option>7</option>
-              <option>8</option>
+            <select
+              multiple
+              size={4}
+              className="form-select"
+              id="tags"
+              name="tags"
+              value={recipe.tags}
+              onChange={this.handleChangeTags}
+            >
+              {this.state.tags.map((tag) => (
+                <option value={tag.id}>{tag.name}</option>
+              ))}
+              <option value={-1} style={{ backgroundColor: "lightblue" }}>
+                Criar nova Etiqueta...
+              </option>
             </select>
+            <small>
+              Para seleccionar várias Etiquetas, mantenha a tecla <strong>Ctrl</strong> carregada
+              antes de seleccionar cada Etiqueta.
+            </small>
           </div>
 
           <hr />

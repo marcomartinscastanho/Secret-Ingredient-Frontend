@@ -1,9 +1,9 @@
 import React, { Component, Fragment } from "react";
 import { Link } from "react-router-dom";
-import { TagDto } from "../types/dtos.type";
+import { TagOutputDto } from "../types/dtos.type";
 
 interface State {
-  tags: TagDto[];
+  tags: TagOutputDto[];
   isLoaded: boolean;
   error: string;
 }
@@ -19,7 +19,7 @@ export class TagsPage extends Component<{}, State> {
         }
         return response.json();
       })
-      .then((jsonRes: { data: TagDto[] }) => {
+      .then((jsonRes: { data: TagOutputDto[] }) => {
         this.setState({
           tags: jsonRes.data,
           isLoaded: true,

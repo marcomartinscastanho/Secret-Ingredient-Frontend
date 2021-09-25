@@ -1,13 +1,13 @@
 import React, { Component, Fragment } from "react";
 import { RouteComponentProps } from "react-router";
-import { RecipeDto } from "../types/dtos.type";
+import { RecipeOutputDto } from "../types/dtos.type";
 
 interface Props {
   id: string;
 }
 
 interface State {
-  recipe: RecipeDto;
+  recipe: RecipeOutputDto;
   isLoaded: boolean;
   error: string;
 }
@@ -38,7 +38,7 @@ export class Recipe extends Component<RouteComponentProps<Props>, State> {
         }
         return response.json();
       })
-      .then((jsonRes: RecipeDto) => {
+      .then((jsonRes: RecipeOutputDto) => {
         this.setState({
           recipe: jsonRes,
           isLoaded: true,

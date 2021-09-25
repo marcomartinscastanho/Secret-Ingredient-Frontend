@@ -1,14 +1,14 @@
 import React, { Component, Fragment } from "react";
 import { RouteComponentProps } from "react-router";
 import { Link } from "react-router-dom";
-import { RecipeDto } from "../types/dtos.type";
+import { RecipeOutputDto } from "../types/dtos.type";
 
 interface Props {
   id: string;
 }
 
 interface State {
-  recipes: RecipeDto[];
+  recipes: RecipeOutputDto[];
   isLoaded: boolean;
   error: string;
 }
@@ -24,7 +24,7 @@ export class Ingredient extends Component<RouteComponentProps<Props>, State> {
         }
         return response.json();
       })
-      .then((jsonRes: { data: RecipeDto[] }) => {
+      .then((jsonRes: { data: RecipeOutputDto[] }) => {
         this.setState({
           recipes: jsonRes.data,
           isLoaded: true,

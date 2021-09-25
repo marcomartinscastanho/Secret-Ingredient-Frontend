@@ -1,9 +1,9 @@
 import React, { Component, Fragment } from "react";
 import { Link } from "react-router-dom";
-import { IngredientDto } from "../types/dtos.type";
+import { IngredientOutputDto } from "../types/dtos.type";
 
 interface State {
-  ingredients: IngredientDto[];
+  ingredients: IngredientOutputDto[];
   isLoaded: boolean;
   error: string;
 }
@@ -19,7 +19,7 @@ export class IngredientsPage extends Component<{}, State> {
         }
         return response.json();
       })
-      .then((jsonRes: { data: IngredientDto[] }) => {
+      .then((jsonRes: { data: IngredientOutputDto[] }) => {
         this.setState({
           ingredients: jsonRes.data,
           isLoaded: true,
