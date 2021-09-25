@@ -7,6 +7,12 @@ import {
   TagOutputDto,
 } from "../types/dtos.type";
 import "./EditRecipe.css";
+import { NumberInput } from "./form-components/NumberInput";
+import { PreparationStepsInput } from "./form-components/PreparationStepsInput";
+import { RecipeIngredientsInput } from "./form-components/RecipeIngredientsInput";
+import { TagsSelect } from "./form-components/TagsSelect";
+import { TextAreaInput } from "./form-components/TextAreaInput";
+import { TextInput } from "./form-components/TextInput";
 
 interface State {
   recipe: RecipeInputDto;
@@ -46,17 +52,13 @@ export class EditRecipe extends Component<RouteComponentProps, State> {
     };
 
     this.handleChange = this.handleChange.bind(this);
-
     this.handleAddIngredient = this.handleAddIngredient.bind(this);
     this.handleRemoveIngredient = this.handleRemoveIngredient.bind(this);
     this.handleChangeIngredient = this.handleChangeIngredient.bind(this);
-
     this.handleAddPreparationStep = this.handleAddPreparationStep.bind(this);
     this.handleRemovePreparationStep = this.handleRemovePreparationStep.bind(this);
     this.handleChangePreparationStep = this.handleChangePreparationStep.bind(this);
-
     this.handleChangeTags = this.handleChangeTags.bind(this);
-
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
@@ -194,7 +196,7 @@ export class EditRecipe extends Component<RouteComponentProps, State> {
   }
 
   render() {
-    const { recipe } = this.state;
+    const { recipe, tags, ingredients } = this.state;
 
     return (
       <Fragment>
@@ -204,226 +206,56 @@ export class EditRecipe extends Component<RouteComponentProps, State> {
         <form onSubmit={this.handleSubmit}>
           <input type="hidden" name="id" id="id" value={recipe.id} onChange={this.handleChange} />
 
-          <div className="mb-3">
-            <label htmlFor="title" className="form-label">
-              Título
-            </label>
-            <input
-              type="text"
-              className="form-control"
-              id="title"
-              name="title"
-              value={recipe.title}
-              onChange={this.handleChange}
-            />
-          </div>
-
-          <div className="mb-3">
-            <label htmlFor="description" className="form-label">
-              Descrição
-            </label>
-            <textarea
-              className="form-control"
-              id="description"
-              name="description"
-              rows={3}
-              value={recipe.description}
-              onChange={this.handleChange}
-            />
-          </div>
-
-          <div className="mb-3">
-            <label htmlFor="ingredients" className="form-label">
-              Ingredientes
-            </label>
-            {recipe.ingredients.map((recipeIngredient, index) => (
-              <div className="row mb-3">
-                <div className="col-sm-2">
-                  <input
-                    type="text"
-                    className="form-control"
-                    id={`ingredient.quantity-${index}`}
-                    name={`quantity`}
-                    key={index}
-                    placeholder="quantidade"
-                    value={recipeIngredient.quantity}
-                    onChange={(event) => {
-                      this.handleChangeIngredient(event, index);
-                    }}
-                  />
-                </div>
-                <div className="col-sm-1 d-flex align-items-center justify-content-center">de</div>
-                <div className="col-sm-4">
-                  <select
-                    className="form-select"
-                    id={`ingredient.ingredient-${index}`}
-                    name={`ingredient`}
-                    key={index}
-                    value={recipeIngredient.ingredient}
-                    onChange={(event) => {
-                      this.handleChangeIngredient(event, index);
-                    }}
-                  >
-                    <option>Seleccione o Ingrediente</option>
-                    {this.state.ingredients.map((ingredient) => (
-                      <option value={ingredient.id}>{ingredient.name}</option>
-                    ))}
-                    <option value={-1} style={{ backgroundColor: "lightblue" }}>
-                      Criar novo Ingrediente...
-                    </option>
-                  </select>
-                </div>
-                <div className="col-sm-4">
-                  <input
-                    type="text"
-                    className="form-control"
-                    id={`ingredient.specification-${index}`}
-                    name={`specification`}
-                    placeholder="detalhes (opcional)"
-                    key={index}
-                    value={recipeIngredient.specification}
-                    onChange={(event) => {
-                      this.handleChangeIngredient(event, index);
-                    }}
-                  />
-                </div>
-                {index < recipe.ingredients.length - 1 && (
-                  <div className="col-sm-1 text-end">
-                    <button
-                      className="btn btn-danger"
-                      onClick={() => this.handleRemoveIngredient(index)}
-                    >
-                      <strong>&#10005;</strong>
-                    </button>
-                  </div>
-                )}
-                {index === recipe.ingredients.length - 1 && (
-                  <div className="col-sm-1 text-end">
-                    <button className="btn btn-primary" onClick={this.handleAddIngredient}>
-                      <strong>&#65291;</strong>
-                    </button>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-
-          <div className="mb-3">
-            <label htmlFor="preparation" className="form-label">
-              Preparação
-            </label>
-            {recipe.preparationSteps.map((preparationStep, index) => (
-              <div className="row mb-3">
-                <div className="col-sm-1 d-flex align-items-center justify-content-center">
-                  {index + 1}
-                </div>
-                <div className="col-sm-10">
-                  <textarea
-                    className="form-control"
-                    id={`preparation-${index}`}
-                    name={`preparation-${index}`}
-                    rows={2}
-                    key={index}
-                    value={preparationStep}
-                    onChange={(event) => {
-                      this.handleChangePreparationStep(event, index);
-                    }}
-                  />
-                </div>
-                {index < recipe.preparationSteps.length - 1 && (
-                  <div className="col-sm-1 d-flex align-items-center justify-content-end">
-                    <button
-                      className="btn btn-danger"
-                      onClick={() => this.handleRemovePreparationStep(index)}
-                    >
-                      <strong>&#10005;</strong>
-                    </button>
-                  </div>
-                )}
-                {index === recipe.preparationSteps.length - 1 && (
-                  <div className="col-sm-1 d-flex align-items-center justify-content-end">
-                    <button className="btn btn-primary" onClick={this.handleAddPreparationStep}>
-                      <strong>+</strong>
-                    </button>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-
-          <div className="mb-3">
-            <label htmlFor="preparationTime" className="form-label">
-              Tempo de Preparação
-            </label>
-            <input
-              type="number"
-              min={0}
-              max={60}
-              className="form-control"
-              id="preparationTime"
-              name="preparationTime"
-              value={recipe.preparationTime}
-              onChange={this.handleChange}
-            />
-          </div>
-
-          <div className="mb-3">
-            <label htmlFor="cookingTime" className="form-label">
-              Tempo de Cozedura
-            </label>
-            <input
-              type="number"
-              min={0}
-              max={1440}
-              className="form-control"
-              id="cookingTime"
-              name="cookingTime"
-              value={recipe.cookingTime}
-              onChange={this.handleChange}
-            />
-          </div>
-
-          <div className="mb-3">
-            <label htmlFor="portions" className="form-label">
-              Porções
-            </label>
-            <input
-              type="number"
-              min={0}
-              max={20}
-              className="form-control"
-              id="portions"
-              name="portions"
-              value={recipe.portions}
-              onChange={this.handleChange}
-            />
-          </div>
-
-          <div className="mb-5">
-            <label htmlFor="tags" className="form-label">
-              Etiquetas
-            </label>
-            <select
-              multiple
-              size={4}
-              className="form-select"
-              id="tags"
-              name="tags"
-              value={recipe.tags}
-              onChange={this.handleChangeTags}
-            >
-              {this.state.tags.map((tag) => (
-                <option value={tag.id}>{tag.name}</option>
-              ))}
-              <option value={-1} style={{ backgroundColor: "lightblue" }}>
-                Criar nova Etiqueta...
-              </option>
-            </select>
-            <small>
-              Para seleccionar várias Etiquetas, mantenha a tecla <strong>Ctrl</strong> carregada
-              antes de seleccionar cada Etiqueta.
-            </small>
-          </div>
+          <TextInput
+            title="Título"
+            name="title"
+            value={recipe.title}
+            onChange={this.handleChange}
+          />
+          <TextAreaInput
+            title="Descrição"
+            name="description"
+            value={recipe.title}
+            onChange={this.handleChange}
+          />
+          <RecipeIngredientsInput
+            recipeIngredients={recipe.ingredients}
+            options={ingredients}
+            onAddIngredient={this.handleAddIngredient}
+            onChangeIngredient={this.handleChangeIngredient}
+            onRemoveIngredient={this.handleRemoveIngredient}
+          />
+          <PreparationStepsInput
+            steps={recipe.preparationSteps}
+            onAddStep={this.handleAddPreparationStep}
+            onChangeStep={this.handleChangePreparationStep}
+            onRemoveStep={this.handleRemovePreparationStep}
+          />
+          <NumberInput
+            title="Tempo de Preparação"
+            name="preparationTime"
+            value={recipe.preparationTime}
+            min={0}
+            max={60}
+            onChange={this.handleChange}
+          />
+          <NumberInput
+            title="Tempo de Cozedura"
+            name="cookingTime"
+            value={recipe.cookingTime}
+            min={0}
+            max={1000}
+            onChange={this.handleChange}
+          />
+          <NumberInput
+            title="Porções"
+            name="portions"
+            value={recipe.portions}
+            min={0}
+            max={20}
+            onChange={this.handleChange}
+          />
+          <TagsSelect value={recipe.tags} onChange={this.handleChangeTags} options={tags} />
 
           <hr />
 
