@@ -48,7 +48,7 @@ export class Tag extends Component<RouteComponentProps<Props>, State> {
             {recipes.map((recipe) => (
               <Link
                 key={recipe.id}
-                to={`/recipes/${recipe.id}`}
+                to={`/recipe/${recipe.id}`}
                 className="list-group-item list-group-item-action"
               >
                 {recipe.title}

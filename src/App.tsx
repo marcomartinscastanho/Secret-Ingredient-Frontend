@@ -35,7 +35,7 @@ export function App() {
                   <Link to="/tags">Etiquetas</Link>
                 </li>
                 <li className="list-group-item">
-                  <Link to="/recipes/new">Nova Receita</Link>
+                  <Link to="/recipe/edit/0">Nova Receita</Link>
                 </li>
                 <li className="list-group-item">
                   <Link to="/admin">Admin Area</Link>
@@ -45,8 +45,8 @@ export function App() {
           </div>
           <div className="col-md-10">
             <Switch>
-              <Route path="/recipes/new" component={EditRecipe} />
-              <Route path="/recipes/:id" component={Recipe} />
+              <Route path="/recipe/edit/:id" component={EditRecipe} />
+              <Route path="/recipe/:id" component={Recipe} />
               <Route path="/recipes">
                 <RecipesPage />
               </Route>

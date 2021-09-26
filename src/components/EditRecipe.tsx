@@ -4,6 +4,7 @@ import {
   IngredientOutputDto,
   RecipeIngredientInputDto,
   RecipeInputDto,
+  RecipeOutputDto,
   TagOutputDto,
 } from "../types/dtos.type";
 import "./EditRecipe.css";
@@ -13,6 +14,10 @@ import { RecipeIngredientsInput } from "./form-components/RecipeIngredientsInput
 import { TagsSelect } from "./form-components/TagsSelect";
 import { TextAreaInput } from "./form-components/TextAreaInput";
 import { TextInput } from "./form-components/TextInput";
+
+interface Props {
+  id: string;
+}
 
 interface State {
   recipe: RecipeInputDto;
@@ -30,8 +35,8 @@ const newRecipeIngredient = (): RecipeIngredientInputDto => {
   };
 };
 
-export class EditRecipe extends Component<RouteComponentProps, State> {
-  constructor(props: RouteComponentProps) {
+export class EditRecipe extends Component<RouteComponentProps<Props>, State> {
+  constructor(props: RouteComponentProps<Props>) {
     super(props);
 
     this.state = {
@@ -193,10 +198,43 @@ export class EditRecipe extends Component<RouteComponentProps, State> {
           tags: jsonRes.data,
         });
       });
+
+    const id = this.props.match.params.id;
+    if (id !== "0") {
+      fetch("http://localhost:19061/v1/recipes/" + this.props.match.params.id)
+        .then((response) => {
+          if (response.status !== 200) {
+            this.setState({ error: "Invalid response code: " + response.status });
+          }
+          return response.json();
+        })
+        .then((jsonRes: RecipeOutputDto) => {
+          this.setState({
+            recipe: {
+              ...jsonRes,
+              tags: jsonRes.tags.map((tag) => tag.id),
+              ingredients: jsonRes.ingredients.map((recipeIngredient) => ({
+                quantity: recipeIngredient.quantity,
+                ingredient: recipeIngredient.ingredient.id,
+                specification: recipeIngredient.specification,
+              })),
+            },
+            isLoaded: true,
+          });
+        });
+    } else {
+      this.setState({ isLoaded: true });
+    }
   }
 
   render() {
-    const { recipe, tags, ingredients } = this.state;
+    const { recipe, tags, ingredients, isLoaded, error } = this.state;
+
+    if (error) {
+      return <div>Erro: {error}</div>;
+    } else if (!isLoaded) {
+      return <p>Carregando...</p>;
+    }
 
     return (
       <Fragment>
@@ -215,7 +253,7 @@ export class EditRecipe extends Component<RouteComponentProps, State> {
           <TextAreaInput
             title="Descrição"
             name="description"
-            value={recipe.title}
+            value={recipe.description}
             onChange={this.handleChange}
           />
           <RecipeIngredientsInput
