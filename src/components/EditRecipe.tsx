@@ -163,11 +163,26 @@ export class EditRecipe extends Component<RouteComponentProps<Props>, State> {
   };
 
   handleSubmit = (event: any) => {
-    console.log("Form was submitted");
+    event.preventDefault();
+
+    const id = this.props.match.params.id;
+    const method = id === "0" ? "POST" : "PATCH";
+    const requestOptions = {
+      method,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(this.state.recipe, (key, value) => (isNaN(value) ? value : +value)),
+    };
+
+    console.log(requestOptions.body);
 
     //TODO: prune empty recipeIngredients and empty preparationSteps
 
-    event.preventDefault();
+    // FIXME: only POST for now
+    fetch("http://localhost:19061/v1/recipes", requestOptions)
+      .then((response) => response.json())
+      .then((data) => console.log(data));
   };
 
   componentDidMount() {
