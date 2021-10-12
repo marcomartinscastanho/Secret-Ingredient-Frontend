@@ -14,9 +14,15 @@ import { RecipeIngredientsInput } from "./form-components/RecipeIngredientsInput
 import { TagsSelect } from "./form-components/TagsSelect";
 import { TextAreaInput } from "./form-components/TextAreaInput";
 import { TextInput } from "./form-components/TextInput";
+import Alert from "./ui-components/alert";
 
 interface Props {
   id: string;
+}
+
+type AlertState = {
+  type: "alert-success" | "alert-danger" | "d-none";
+  message: string;
 }
 
 interface State {
@@ -26,6 +32,7 @@ interface State {
   isLoaded: boolean;
   error: string;
   errors: string[];
+  alert: AlertState
 }
 
 const newRecipeIngredient = (): RecipeIngredientInputDto => {
@@ -56,6 +63,10 @@ export class EditRecipe extends Component<RouteComponentProps<Props>, State> {
       isLoaded: false,
       error: "",
       errors: [],
+      alert: {
+        type: "d-none",
+        message: ""
+      }
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -196,7 +207,13 @@ export class EditRecipe extends Component<RouteComponentProps<Props>, State> {
     // FIXME: only POST for now
     fetch("http://localhost:19061/v1/recipes", requestOptions)
       .then((response) => response.json())
-      .then((data) => console.log(data));
+      .then((data) => {
+        if (data.error){
+          this.setState({alert: {type: "alert-danger", message: data.message}})
+        } else {
+          this.setState({alert: {type: "alert-success", message: "Receita guardada!"}})
+        }
+      });
   };
 
   // TODO: add form validation to all input fields
@@ -262,7 +279,7 @@ export class EditRecipe extends Component<RouteComponentProps<Props>, State> {
   }
 
   render() {
-    const { recipe, tags, ingredients, isLoaded, error } = this.state;
+    const { recipe, tags, ingredients, isLoaded, error, alert } = this.state;
 
     if (error) {
       return <div>Erro: {error}</div>;
@@ -274,6 +291,8 @@ export class EditRecipe extends Component<RouteComponentProps<Props>, State> {
       <Fragment>
         <h2>Adicionar/Editar Receita</h2>
         <hr />
+
+        <Alert type={alert.type} message={alert.message}/>
 
         <form onSubmit={this.handleSubmit}>
           <input type="hidden" name="id" id="id" value={recipe.id} onChange={this.handleChange} />
@@ -335,10 +354,10 @@ export class EditRecipe extends Component<RouteComponentProps<Props>, State> {
 
           <button className="btn btn-primary">Guardar</button>
         </form>
-
+{/*
         <div className="mt-3">
           <pre>{JSON.stringify(this.state, null, 3)}</pre>
-        </div>
+</div> */}
       </Fragment>
     );
   }
