@@ -25,6 +25,7 @@ interface State {
   tags: TagOutputDto[];
   isLoaded: boolean;
   error: string;
+  errors: string[];
 }
 
 const newRecipeIngredient = (): RecipeIngredientInputDto => {
@@ -42,11 +43,11 @@ export class EditRecipe extends Component<RouteComponentProps<Props>, State> {
     this.state = {
       recipe: {
         title: "",
-        portions: 0,
+        portions: undefined,
         tags: [],
         description: "",
-        cookingTime: 0,
-        preparationTime: 0,
+        cookingTime: undefined,
+        preparationTime: undefined,
         ingredients: [newRecipeIngredient()],
         preparationSteps: [""],
       },
@@ -54,6 +55,7 @@ export class EditRecipe extends Component<RouteComponentProps<Props>, State> {
       tags: [],
       isLoaded: false,
       error: "",
+      errors: [],
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -165,6 +167,18 @@ export class EditRecipe extends Component<RouteComponentProps<Props>, State> {
   handleSubmit = (event: any) => {
     event.preventDefault();
 
+    // client side validation
+    const errors = [];
+    if (this.state.recipe.title === "") {
+      errors.push("title");
+    }
+
+    this.setState({ errors });
+
+    if (errors.length > 0) {
+      return false;
+    }
+
     const id = this.props.match.params.id;
     const method = id === "0" ? "POST" : "PATCH";
     const requestOptions = {
@@ -184,6 +198,11 @@ export class EditRecipe extends Component<RouteComponentProps<Props>, State> {
       .then((response) => response.json())
       .then((data) => console.log(data));
   };
+
+  // TODO: add form validation to all input fields
+  hasError(key: string) {
+    return this.state.errors.indexOf(key) !== -1;
+  }
 
   componentDidMount() {
     // get list of ingredients
@@ -264,6 +283,8 @@ export class EditRecipe extends Component<RouteComponentProps<Props>, State> {
             name="title"
             value={recipe.title}
             onChange={this.handleChange}
+            hasError={this.hasError("title")}
+            errorMessage="Por favor insira um título"
           />
           <TextAreaInput
             title="Descrição"
