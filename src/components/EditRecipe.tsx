@@ -229,7 +229,7 @@ export class EditRecipe extends Component<RouteComponentProps<Props>, State> {
     return this.state.errors.indexOf(key) !== -1;
   }
 
-  componentDidMount() {
+  getIngredients() {
     // get list of ingredients
     fetch("http://localhost:19061/v1/ingredients")
       .then((response) => {
@@ -243,7 +243,9 @@ export class EditRecipe extends Component<RouteComponentProps<Props>, State> {
           ingredients: jsonRes.data,
         });
       });
+  }
 
+  getTags() {
     // get list of tags
     fetch("http://localhost:19061/v1/tags")
       .then((response) => {
@@ -257,30 +259,39 @@ export class EditRecipe extends Component<RouteComponentProps<Props>, State> {
           tags: jsonRes.data,
         });
       });
+  }
+
+  getRecipe(id: string) {
+    fetch("http://localhost:19061/v1/recipes/" + id)
+      .then((response) => {
+        if (response.status !== 200) {
+          this.setState({ error: "Invalid response code: " + response.status });
+        }
+        return response.json();
+      })
+      .then((jsonRes: RecipeOutputDto) => {
+        this.setState({
+          recipe: {
+            ...jsonRes,
+            tagIds: jsonRes.tags.map((tag) => tag.id),
+            ingredients: jsonRes.ingredients.map((recipeIngredient) => ({
+              quantity: recipeIngredient.quantity,
+              ingredientId: recipeIngredient.ingredient.id,
+              specification: recipeIngredient.specification,
+            })),
+          },
+          isLoaded: true,
+        });
+      });
+  }
+
+  componentDidMount() {
+    this.getIngredients();
+    this.getTags();
 
     const id = this.props.match.params.id;
     if (id !== "0") {
-      fetch("http://localhost:19061/v1/recipes/" + this.props.match.params.id)
-        .then((response) => {
-          if (response.status !== 200) {
-            this.setState({ error: "Invalid response code: " + response.status });
-          }
-          return response.json();
-        })
-        .then((jsonRes: RecipeOutputDto) => {
-          this.setState({
-            recipe: {
-              ...jsonRes,
-              tagIds: jsonRes.tags.map((tag) => tag.id),
-              ingredients: jsonRes.ingredients.map((recipeIngredient) => ({
-                quantity: recipeIngredient.quantity,
-                ingredientId: recipeIngredient.ingredient.id,
-                specification: recipeIngredient.specification,
-              })),
-            },
-            isLoaded: true,
-          });
-        });
+      this.getRecipe(id);
     } else {
       this.setState({ isLoaded: true });
     }
