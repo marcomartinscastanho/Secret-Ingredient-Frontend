@@ -40,7 +40,7 @@ export const RecipeIngredientsInput = (props: Props) => {
               id={`ingredient.ingredient-${index}`}
               name={`ingredient`}
               key={index}
-              value={recipeIngredient.ingredient}
+              value={recipeIngredient.ingredientId}
               onChange={(event) => {
                 props.onChangeIngredient(event, index);
               }}

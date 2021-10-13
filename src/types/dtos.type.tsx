@@ -5,7 +5,7 @@ export type RecipeInputDto = {
 
   portions?: number;
 
-  tags: string[];
+  tagIds: string[];
 
   description: string;
 
@@ -57,9 +57,9 @@ export type TagOutputDto = {
 export type RecipeIngredientInputDto = {
   quantity: string;
 
-  ingredient: string;
+  ingredientId: string;
 
-  specification: string;
+  specification?: string;
 };
 
 export type RecipeIngredientOutputDto = {
@@ -67,7 +67,7 @@ export type RecipeIngredientOutputDto = {
 
   ingredient: IngredientOutputDto;
 
-  specification: string;
+  specification?: string;
 };
 
 export type IngredientInputDto = {

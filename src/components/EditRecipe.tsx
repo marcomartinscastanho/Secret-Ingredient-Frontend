@@ -23,7 +23,7 @@ interface Props {
 type AlertState = {
   type: "alert-success" | "alert-danger" | "d-none";
   message: string;
-}
+};
 
 interface State {
   recipe: RecipeInputDto;
@@ -32,14 +32,13 @@ interface State {
   isLoaded: boolean;
   error: string;
   errors: string[];
-  alert: AlertState
+  alert: AlertState;
 }
 
 const newRecipeIngredient = (): RecipeIngredientInputDto => {
   return {
-    ingredient: "",
+    ingredientId: "",
     quantity: "",
-    specification: "",
   };
 };
 
@@ -51,7 +50,7 @@ export class EditRecipe extends Component<RouteComponentProps<Props>, State> {
       recipe: {
         title: "",
         portions: undefined,
-        tags: [],
+        tagIds: [],
         description: "",
         cookingTime: undefined,
         preparationTime: undefined,
@@ -65,8 +64,8 @@ export class EditRecipe extends Component<RouteComponentProps<Props>, State> {
       errors: [],
       alert: {
         type: "d-none",
-        message: ""
-      }
+        message: "",
+      },
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -90,7 +89,7 @@ export class EditRecipe extends Component<RouteComponentProps<Props>, State> {
 
   handleAddIngredient = () => {
     const thereAreEmptyIngredients = this.state.recipe.ingredients.some(
-      (recipeIngredient) => !recipeIngredient.quantity || !recipeIngredient.ingredient
+      (recipeIngredient) => !recipeIngredient.quantity || !recipeIngredient.ingredientId
     );
 
     if (thereAreEmptyIngredients) {
@@ -171,7 +170,7 @@ export class EditRecipe extends Component<RouteComponentProps<Props>, State> {
     const selected = [...event.target.options].filter((o) => o.selected).map((o) => o.value);
 
     this.setState((prevState) => ({
-      recipe: { ...prevState.recipe, tags: selected },
+      recipe: { ...prevState.recipe, tagIds: selected },
     }));
   };
 
@@ -179,6 +178,7 @@ export class EditRecipe extends Component<RouteComponentProps<Props>, State> {
     event.preventDefault();
 
     // client side validation
+    // TODO: do the same for other inputs
     const errors = [];
     if (this.state.recipe.title === "") {
       errors.push("title");
@@ -192,26 +192,31 @@ export class EditRecipe extends Component<RouteComponentProps<Props>, State> {
 
     const id = this.props.match.params.id;
     const method = id === "0" ? "POST" : "PATCH";
+    const baseUrl = "http://localhost:19061/v1/recipes";
+    const url = id === "0" ? baseUrl : `${baseUrl}/${id}`;
     const requestOptions = {
       method,
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(this.state.recipe, (key, value) => (isNaN(value) ? value : +value)),
-    };
+      body: JSON.stringify(this.state.recipe, (key, value) => {
+        if (key === "quantity") {
+          return `${value}`;
+        }
 
-    console.log(requestOptions.body);
+        return isNaN(value) ? value : +value;
+      }),
+    };
 
     //TODO: prune empty recipeIngredients and empty preparationSteps
 
-    // FIXME: only POST for now
-    fetch("http://localhost:19061/v1/recipes", requestOptions)
+    fetch(url, requestOptions)
       .then((response) => response.json())
       .then((data) => {
-        if (data.error){
-          this.setState({alert: {type: "alert-danger", message: data.message}})
+        if (data.error) {
+          this.setState({ alert: { type: "alert-danger", message: data.message } });
         } else {
-          this.setState({alert: {type: "alert-success", message: "Receita guardada!"}})
+          this.setState({ alert: { type: "alert-success", message: "Receita guardada!" } });
         }
       });
   };
@@ -263,10 +268,10 @@ export class EditRecipe extends Component<RouteComponentProps<Props>, State> {
           this.setState({
             recipe: {
               ...jsonRes,
-              tags: jsonRes.tags.map((tag) => tag.id),
+              tagIds: jsonRes.tags.map((tag) => tag.id),
               ingredients: jsonRes.ingredients.map((recipeIngredient) => ({
                 quantity: recipeIngredient.quantity,
-                ingredient: recipeIngredient.ingredient.id,
+                ingredientId: recipeIngredient.ingredient.id,
                 specification: recipeIngredient.specification,
               })),
             },
@@ -292,7 +297,7 @@ export class EditRecipe extends Component<RouteComponentProps<Props>, State> {
         <h2>Adicionar/Editar Receita</h2>
         <hr />
 
-        <Alert type={alert.type} message={alert.message}/>
+        <Alert type={alert.type} message={alert.message} />
 
         <form onSubmit={this.handleSubmit}>
           <input type="hidden" name="id" id="id" value={recipe.id} onChange={this.handleChange} />
@@ -348,16 +353,16 @@ export class EditRecipe extends Component<RouteComponentProps<Props>, State> {
             max={20}
             onChange={this.handleChange}
           />
-          <TagsSelect value={recipe.tags} onChange={this.handleChangeTags} options={tags} />
+          <TagsSelect value={recipe.tagIds} onChange={this.handleChangeTags} options={tags} />
 
           <hr />
 
           <button className="btn btn-primary">Guardar</button>
         </form>
-{/*
+
         <div className="mt-3">
           <pre>{JSON.stringify(this.state, null, 3)}</pre>
-</div> */}
+        </div>
       </Fragment>
     );
   }
