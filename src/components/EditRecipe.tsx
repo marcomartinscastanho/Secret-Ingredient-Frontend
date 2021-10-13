@@ -1,5 +1,8 @@
 import React, { Component, Fragment } from "react";
+import { confirmAlert } from "react-confirm-alert";
+import "react-confirm-alert/src/react-confirm-alert.css";
 import { RouteComponentProps } from "react-router";
+import { Link } from "react-router-dom";
 import {
   IngredientOutputDto,
   RecipeIngredientInputDto,
@@ -283,6 +286,25 @@ export class EditRecipe extends Component<RouteComponentProps<Props>, State> {
     }
   }
 
+  confirmDelete = () => {
+    console.log("Would delete recipe id", this.state.recipe.id);
+
+    confirmAlert({
+      title: "Eliminar Receita?",
+      message: "Tem a certeza?",
+      buttons: [
+        {
+          label: "Sim",
+          onClick: () => alert("Click Yes"),
+        },
+        {
+          label: "Não",
+          onClick: () => {},
+        },
+      ],
+    });
+  };
+
   render() {
     const { recipe, tags, ingredients, isLoaded, error, alert } = this.state;
 
@@ -358,6 +380,14 @@ export class EditRecipe extends Component<RouteComponentProps<Props>, State> {
           <hr />
 
           <button className="btn btn-primary">Guardar</button>
+          <Link to="/admin" className="btn btn-warning ms-1">
+            Cancelar
+          </Link>
+          {recipe.id && (
+            <a href="#!" onClick={() => this.confirmDelete()} className="btn btn-danger ms-1">
+              Eliminar
+            </a>
+          )}
         </form>
 
         <div className="mt-3">
