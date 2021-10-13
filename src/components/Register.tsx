@@ -58,7 +58,11 @@ export class Register extends Component<{}, State> {
     this.setState((prevState) => ({ ...prevState, [name]: value }));
 
     if (name === "username") {
-      this.setState({ useDefaultUsername: false });
+      if (value === "") {
+        this.setState({ useDefaultUsername: true });
+      } else {
+        this.setState({ useDefaultUsername: false });
+      }
     }
 
     if (name === "name" && this.state.useDefaultUsername) {
