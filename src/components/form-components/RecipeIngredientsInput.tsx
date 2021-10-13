@@ -38,7 +38,7 @@ export const RecipeIngredientsInput = (props: Props) => {
             <select
               className="form-select"
               id={`ingredient.ingredient-${index}`}
-              name={`ingredient`}
+              name={`ingredientId`}
               key={index}
               value={recipeIngredient.ingredientId}
               onChange={(event) => {
