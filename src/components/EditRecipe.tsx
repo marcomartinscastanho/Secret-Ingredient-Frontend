@@ -219,7 +219,7 @@ export class EditRecipe extends Component<RouteComponentProps<Props>, State> {
         if (data.error) {
           this.setState({ alert: { type: "alert-danger", message: data.message } });
         } else {
-          this.setState({ alert: { type: "alert-success", message: "Receita guardada!" } });
+          this.props.history.push({ pathname: "/admin" });
         }
       });
   };
