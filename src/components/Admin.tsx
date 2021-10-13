@@ -24,8 +24,6 @@ export class Admin extends Component<Props, State> {
   state: State = { recipes: [], isLoaded: false, error: "" };
 
   componentDidMount() {
-    console.log("Admin jwt", this.props.jwt);
-
     const headers = new Headers();
     headers.append("Authorization", "Bearer " + this.props.jwt);
 

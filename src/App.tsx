@@ -1,7 +1,13 @@
 import React, { Component, Fragment } from "react";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
-import { Admin } from "./components/Admin";
-import { EditRecipe } from "./components/EditRecipe";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+  RouteComponentProps,
+} from "react-router-dom";
+import { Admin, RouteProps as AdminRouteProps } from "./components/Admin";
+import { EditRecipe, RouteProps as EditRecipeRouteProps } from "./components/EditRecipe";
 import { Home } from "./components/Home";
 import { Ingredient } from "./components/Ingredient";
 import { IngredientsPage } from "./components/IngredientsPage";
@@ -66,9 +72,6 @@ export class App extends Component<{}, State> {
                     <Link to="/">Início</Link>
                   </li>
                   <li className="list-group-item">
-                    <Link to="/recipes">Receitas</Link>
-                  </li>
-                  <li className="list-group-item">
                     <Link to="/ingredients">Ingredientes</Link>
                   </li>
                   <li className="list-group-item">
@@ -77,10 +80,13 @@ export class App extends Component<{}, State> {
                   {this.state.jwt && (
                     <Fragment>
                       <li className="list-group-item">
+                        <Link to="/recipes">Minhas Receitas</Link>
+                      </li>
+                      <li className="list-group-item">
                         <Link to="/recipe/edit/0">Nova Receita</Link>
                       </li>
                       <li className="list-group-item">
-                        <Link to="/admin">Admin Area</Link>
+                        <Link to="/admin">Editar Receitas</Link>
                       </li>
                     </Fragment>
                   )}
@@ -95,26 +101,29 @@ export class App extends Component<{}, State> {
                 <Route
                   exact
                   path="/register"
-                  component={(props: any) => (
+                  component={(props: RouteComponentProps) => (
                     <Register {...props} handleJwtChange={this.handleJwtChange} />
                   )}
                 />
                 <Route
                   exact
                   path="/login"
-                  component={(props: any) => (
+                  component={(props: RouteComponentProps) => (
                     <Login {...props} handleJwtChange={this.handleJwtChange} />
                   )}
                 />
 
                 <Route
                   path="/recipe/edit/:id"
-                  component={(props: any) => <EditRecipe {...props} jwt={this.state.jwt} />}
+                  component={(props: EditRecipeRouteProps) => (
+                    <EditRecipe {...props} jwt={this.state.jwt} />
+                  )}
                 />
                 <Route path="/recipe/:id" component={Recipe} />
-                <Route path="/recipes">
-                  <RecipesPage />
-                </Route>
+                <Route
+                  path="/recipes"
+                  component={(props: {}) => <RecipesPage {...props} jwt={this.state.jwt} />}
+                />
 
                 <Route path="/ingredients/:id" component={Ingredient} />
                 <Route exact path="/ingredients">
@@ -128,7 +137,7 @@ export class App extends Component<{}, State> {
 
                 <Route
                   path="/admin"
-                  component={(props: any) => <Admin {...props} jwt={this.state.jwt} />}
+                  component={(props: AdminRouteProps) => <Admin {...props} jwt={this.state.jwt} />}
                 />
                 <Route path="/">
                   <Home />

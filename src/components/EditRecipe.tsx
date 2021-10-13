@@ -315,8 +315,6 @@ export class EditRecipe extends Component<Props, State> {
   }
 
   componentDidMount() {
-    console.log("EditRecipe jwt", this.props.jwt);
-
     this.getIngredients();
     this.getTags();
 

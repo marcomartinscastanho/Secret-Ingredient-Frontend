@@ -1,6 +1,13 @@
+import jwtDecode from "jwt-decode";
 import React, { Component, Fragment } from "react";
 import { Link } from "react-router-dom";
 import { RecipeOutputDto } from "../types/dtos.type";
+
+interface Jwt {
+  username: string;
+  sub: string;
+  role: "User" | "Admin";
+}
 
 interface ComponentProps {
   jwt?: string;
@@ -16,7 +23,18 @@ export class RecipesPage extends Component<ComponentProps, State> {
   state: State = { recipes: [], isLoaded: false, error: "" };
 
   componentDidMount() {
-    fetch("http://localhost:19061/v1/recipes")
+    if (!this.props.jwt) {
+      this.setState({ error: "Missing jwt" });
+      return;
+    }
+
+    const jwt = jwtDecode<Jwt>(this.props.jwt);
+    const userId = jwt.sub;
+
+    const headers = new Headers();
+    headers.append("Authorization", "Bearer " + this.props.jwt);
+
+    fetch("http://localhost:19061/v1/recipes?userId=" + userId, { headers })
       .then((response) => {
         if (response.status !== 200) {
           this.setState({ error: "Invalid response code: " + response.status });
@@ -24,10 +42,12 @@ export class RecipesPage extends Component<ComponentProps, State> {
         return response.json();
       })
       .then((jsonRes: { data: RecipeOutputDto[] }) => {
-        this.setState({
-          recipes: jsonRes.data,
-          isLoaded: true,
-        });
+        if (jsonRes.data) {
+          this.setState({
+            recipes: jsonRes.data,
+            isLoaded: true,
+          });
+        }
       });
   }
 
