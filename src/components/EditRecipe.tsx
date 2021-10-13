@@ -21,6 +21,7 @@ import Alert from "./ui-components/alert";
 
 interface Props {
   id: string;
+  jwt: string;
 }
 
 type AlertState = {
@@ -45,8 +46,9 @@ const newRecipeIngredient = (): RecipeIngredientInputDto => {
   };
 };
 
-export class EditRecipe extends Component<RouteComponentProps<Props>, State> {
-  constructor(props: RouteComponentProps<Props>) {
+// FIXME: this is wrong -> RouteComponentProps<Props> & Props
+export class EditRecipe extends Component<RouteComponentProps<Props> & Props, State> {
+  constructor(props: RouteComponentProps<Props> & Props) {
     super(props);
 
     this.state = {
@@ -201,11 +203,13 @@ export class EditRecipe extends Component<RouteComponentProps<Props>, State> {
     const method = id === "0" ? "POST" : "PATCH";
     const baseUrl = "http://localhost:19061/v1/recipes";
     const url = id === "0" ? baseUrl : `${baseUrl}/${id}`;
+    const headers = new Headers();
+    headers.append("Content-Type", "application/json");
+    headers.append("Authorization", "Bearer " + this.props.jwt);
+
     const requestOptions = {
       method,
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers,
       body: JSON.stringify(this.state.recipe, (key, value) => {
         if (key === "quantity") {
           return `${value}`;
@@ -234,7 +238,10 @@ export class EditRecipe extends Component<RouteComponentProps<Props>, State> {
 
   getIngredients() {
     // get list of ingredients
-    fetch("http://localhost:19061/v1/ingredients")
+    const headers = new Headers();
+    headers.append("Authorization", "Bearer " + this.props.jwt);
+
+    fetch("http://localhost:19061/v1/ingredients", { headers })
       .then((response) => {
         if (response.status !== 200) {
           this.setState({ error: "Invalid response code: " + response.status });
@@ -250,7 +257,10 @@ export class EditRecipe extends Component<RouteComponentProps<Props>, State> {
 
   getTags() {
     // get list of tags
-    fetch("http://localhost:19061/v1/tags")
+    const headers = new Headers();
+    headers.append("Authorization", "Bearer " + this.props.jwt);
+
+    fetch("http://localhost:19061/v1/tags", { headers })
       .then((response) => {
         if (response.status !== 200) {
           this.setState({ error: "Invalid response code: " + response.status });
@@ -265,7 +275,10 @@ export class EditRecipe extends Component<RouteComponentProps<Props>, State> {
   }
 
   getRecipe(id: string) {
-    fetch("http://localhost:19061/v1/recipes/" + id)
+    const headers = new Headers();
+    headers.append("Authorization", "Bearer " + this.props.jwt);
+
+    fetch("http://localhost:19061/v1/recipes/" + id, { headers })
       .then((response) => {
         if (response.status !== 200) {
           this.setState({ error: "Invalid response code: " + response.status });
@@ -303,6 +316,8 @@ export class EditRecipe extends Component<RouteComponentProps<Props>, State> {
   }
 
   componentDidMount() {
+    console.log("EditRecipe jwt", this.props.jwt);
+
     this.getIngredients();
     this.getTags();
 

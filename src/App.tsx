@@ -107,7 +107,10 @@ export class App extends Component<{}, State> {
                   )}
                 />
 
-                <Route path="/recipe/edit/:id" component={EditRecipe} />
+                <Route
+                  path="/recipe/edit/:id"
+                  component={(props: any) => <EditRecipe {...props} jwt={this.state.jwt} />}
+                />
                 <Route path="/recipe/:id" component={Recipe} />
                 <Route path="/recipes">
                   <RecipesPage />
@@ -123,9 +126,10 @@ export class App extends Component<{}, State> {
                   <TagsPage />
                 </Route>
 
-                <Route path="/admin">
-                  <Admin />
-                </Route>
+                <Route
+                  path="/admin"
+                  component={(props: any) => <Admin {...props} jwt={this.state.jwt} />}
+                />
                 <Route path="/">
                   <Home />
                 </Route>

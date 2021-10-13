@@ -1,6 +1,11 @@
 import React, { Component, Fragment } from "react";
-import { Link } from "react-router-dom";
+import { Link, RouteComponentProps } from "react-router-dom";
 import { RecipeOutputDto } from "../types/dtos.type";
+
+interface Props {
+  id: string;
+  jwt: string;
+}
 
 interface State {
   recipes: RecipeOutputDto[];
@@ -8,11 +13,17 @@ interface State {
   error: string;
 }
 
-export class Admin extends Component {
+// FIXME: this is wrong -> RouteComponentProps<Props> & Props
+export class Admin extends Component<RouteComponentProps<Props> & Props, State> {
   state: State = { recipes: [], isLoaded: false, error: "" };
 
   componentDidMount() {
-    fetch("http://localhost:19061/v1/recipes")
+    console.log("Admin jwt", this.props.jwt);
+
+    const headers = new Headers();
+    headers.append("Authorization", "Bearer " + this.props.jwt);
+
+    fetch("http://localhost:19061/v1/recipes", { headers })
       .then((response) => {
         if (response.status !== 200) {
           this.setState({ error: "Invalid response code: " + response.status });
