@@ -1,6 +1,8 @@
+import jwtDecode from "jwt-decode";
 import React, { Component, Fragment } from "react";
 import { Link, RouteComponentProps } from "react-router-dom";
 import { RecipeOutputDto } from "../types/dtos.type";
+import { Jwt } from "../types/jwt.interface";
 
 interface Params {
   id: string;
@@ -24,10 +26,18 @@ export class Admin extends Component<Props, State> {
   state: State = { recipes: [], isLoaded: false, error: "" };
 
   componentDidMount() {
+    if (!this.props.jwt) {
+      this.setState({ error: "Missing jwt" });
+      return;
+    }
+
+    const jwt = jwtDecode<Jwt>(this.props.jwt);
+    const userId = jwt.sub;
+
     const headers = new Headers();
     headers.append("Authorization", "Bearer " + this.props.jwt);
 
-    fetch("http://localhost:19061/v1/recipes", { headers })
+    fetch("http://localhost:19061/v1/recipes?userId=" + userId, { headers })
       .then((response) => {
         if (response.status !== 200) {
           this.setState({ error: "Invalid response code: " + response.status });

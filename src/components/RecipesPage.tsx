@@ -2,12 +2,7 @@ import jwtDecode from "jwt-decode";
 import React, { Component, Fragment } from "react";
 import { Link } from "react-router-dom";
 import { RecipeOutputDto } from "../types/dtos.type";
-
-interface Jwt {
-  username: string;
-  sub: string;
-  role: "User" | "Admin";
-}
+import { Jwt } from "../types/jwt.interface";
 
 interface ComponentProps {
   jwt?: string;
