@@ -43,9 +43,10 @@ export class IngredientsPage extends Component<{}, State> {
               <Link
                 key={ingredient.id}
                 to={`/ingredients/${ingredient.id}`}
-                className="list-group-item list-group-item-action"
+                className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
               >
                 {ingredient.name}
+                <span className="badge bg-secondary rounded-pill">{ingredient.popularity}</span>
               </Link>
             ))}
           </div>

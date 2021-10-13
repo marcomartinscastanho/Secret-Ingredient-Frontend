@@ -43,9 +43,10 @@ export class TagsPage extends Component<{}, State> {
               <Link
                 key={tag.id}
                 to={`/tags/${tag.id}`}
-                className="list-group-item list-group-item-action"
+                className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
               >
                 {tag.name}
+                <span className="badge bg-secondary rounded-pill">{tag.popularity}</span>
               </Link>
             ))}
           </div>
