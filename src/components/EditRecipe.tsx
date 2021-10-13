@@ -224,7 +224,6 @@ export class EditRecipe extends Component<RouteComponentProps<Props>, State> {
       });
   };
 
-  // TODO: add form validation to all input fields
   hasError(key: string) {
     return this.state.errors.indexOf(key) !== -1;
   }
@@ -350,6 +349,7 @@ export class EditRecipe extends Component<RouteComponentProps<Props>, State> {
           <input type="hidden" name="id" id="id" value={recipe.id} onChange={this.handleChange} />
 
           <TextInput
+            type="text"
             title="Título"
             name="title"
             value={recipe.title}

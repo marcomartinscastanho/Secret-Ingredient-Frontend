@@ -1,6 +1,7 @@
 import { ChangeEvent } from "react";
 
 interface Props {
+  type: "text" | "email" | "password";
   name: string;
   title?: string;
   value?: string;
@@ -17,7 +18,7 @@ export const TextInput = (props: Props) => {
         {props.title}
       </label>
       <input
-        type="text"
+        type={props.type}
         className={`form-control ${props.hasError ? "is-invalid" : ""}`}
         id={props.name}
         name={props.name}
