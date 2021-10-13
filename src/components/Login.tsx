@@ -8,7 +8,7 @@ type AlertState = {
 };
 
 interface State {
-  email: string;
+  username: string;
   password: string;
   error?: string;
   errors: string[];
@@ -20,7 +20,7 @@ export class Login extends Component<{}, State> {
     super(props);
 
     this.state = {
-      email: "",
+      username: "",
       password: "",
       errors: [],
       alert: { type: "d-none", message: "" },
@@ -36,8 +36,43 @@ export class Login extends Component<{}, State> {
     this.setState((prevState) => ({ ...prevState, [name]: value }));
   };
 
+  isInputValid = () => {
+    // client side validation
+    const errors = [];
+    if (this.state.username === "") {
+      errors.push("username");
+    }
+    if (this.state.password === "") {
+      errors.push("password");
+    }
+
+    this.setState({ errors });
+
+    return errors.length === 0;
+  };
+
   handleSubmit = (event: any) => {
     event.preventDefault();
+
+    if (!this.isInputValid()) {
+      return false;
+    }
+
+    const data = new FormData(event.target);
+    const payload = Object.fromEntries(data.entries());
+    const requestOptions = { method: "POST", body: JSON.stringify(payload) };
+
+    fetch("http://localhost:19061/v1/auth/login", requestOptions)
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.error) {
+          this.setState({ alert: { type: "alert-danger", message: data.message } });
+        } else {
+          console.log(data);
+
+          // this.props.history.push({ pathname: "/admin" });
+        }
+      });
   };
 
   hasError(key: string) {
@@ -45,7 +80,7 @@ export class Login extends Component<{}, State> {
   }
 
   render() {
-    const { email, password, alert } = this.state;
+    const { alert } = this.state;
 
     return (
       <Fragment>
@@ -55,12 +90,12 @@ export class Login extends Component<{}, State> {
 
         <form className="pt-3" onSubmit={this.handleSubmit}>
           <TextInput
-            type="email"
-            title="Email"
-            name="email"
+            type="text"
+            title="Nome de Utilizador"
+            name="username"
             onChange={this.handleChange}
-            hasError={this.hasError("email")}
-            errorMessage="Por favor insira um email"
+            hasError={this.hasError("username")}
+            errorMessage="Por favor insira um nome de utilizador"
           />
           <TextInput
             type="password"

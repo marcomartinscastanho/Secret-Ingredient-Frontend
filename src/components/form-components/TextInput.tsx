@@ -1,7 +1,7 @@
 import { ChangeEvent } from "react";
 
 interface Props {
-  type: "text" | "email" | "password";
+  type: "text" | "password";
   name: string;
   title?: string;
   value?: string;

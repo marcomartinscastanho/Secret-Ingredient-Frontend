@@ -177,9 +177,7 @@ export class EditRecipe extends Component<RouteComponentProps<Props>, State> {
     }));
   };
 
-  handleSubmit = (event: any) => {
-    event.preventDefault();
-
+  isInputValid = () => {
     // client side validation
     // TODO: do the same for other inputs
     const errors = [];
@@ -189,7 +187,13 @@ export class EditRecipe extends Component<RouteComponentProps<Props>, State> {
 
     this.setState({ errors });
 
-    if (errors.length > 0) {
+    return errors.length === 0;
+  };
+
+  handleSubmit = (event: any) => {
+    event.preventDefault();
+
+    if (!this.isInputValid()) {
       return false;
     }
 
