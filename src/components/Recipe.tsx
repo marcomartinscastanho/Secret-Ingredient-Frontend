@@ -2,9 +2,17 @@ import React, { Component, Fragment } from "react";
 import { RouteComponentProps } from "react-router";
 import { RecipeOutputDto } from "../types/dtos.type";
 
-interface Props {
+interface Params {
   id: string;
 }
+
+interface ComponentProps {
+  jwt: string;
+}
+
+export interface RouteProps extends RouteComponentProps<Params> {}
+
+interface Props extends RouteProps, ComponentProps {}
 
 interface State {
   recipe: RecipeOutputDto;
@@ -12,7 +20,7 @@ interface State {
   error: string;
 }
 
-export class Recipe extends Component<RouteComponentProps<Props>, State> {
+export class Recipe extends Component<Props, State> {
   state: State = {
     recipe: {
       id: "",

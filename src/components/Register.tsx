@@ -3,9 +3,11 @@ import { RouteComponentProps } from "react-router-dom";
 import TextInput from "./form-components/TextInput";
 import Alert from "./ui-components/alert";
 
-type Props = {
+interface ComponentProps {
   handleJwtChange: (jwt: string) => void;
-};
+}
+
+interface Props extends RouteComponentProps, ComponentProps {}
 
 type AlertState = {
   type: "alert-success" | "alert-danger" | "d-none";
@@ -23,8 +25,8 @@ interface State {
   alert: AlertState;
 }
 
-export class Register extends Component<RouteComponentProps & Props, State> {
-  constructor(props: RouteComponentProps & Props) {
+export class Register extends Component<Props, State> {
+  constructor(props: Props) {
     super(props);
 
     this.state = {

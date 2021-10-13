@@ -2,10 +2,17 @@ import React, { Component, Fragment } from "react";
 import { Link, RouteComponentProps } from "react-router-dom";
 import { RecipeOutputDto } from "../types/dtos.type";
 
-interface Props {
+interface Params {
   id: string;
-  jwt: string;
 }
+
+interface ComponentProps {
+  jwt?: string;
+}
+
+export interface RouteProps extends RouteComponentProps<Params> {}
+
+interface Props extends RouteProps, ComponentProps {}
 
 interface State {
   recipes: RecipeOutputDto[];
@@ -13,8 +20,7 @@ interface State {
   error: string;
 }
 
-// FIXME: this is wrong -> RouteComponentProps<Props> & Props
-export class Admin extends Component<RouteComponentProps<Props> & Props, State> {
+export class Admin extends Component<Props, State> {
   state: State = { recipes: [], isLoaded: false, error: "" };
 
   componentDidMount() {

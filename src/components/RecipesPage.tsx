@@ -2,13 +2,17 @@ import React, { Component, Fragment } from "react";
 import { Link } from "react-router-dom";
 import { RecipeOutputDto } from "../types/dtos.type";
 
+interface ComponentProps {
+  jwt?: string;
+}
+
 interface State {
   recipes: RecipeOutputDto[];
   isLoaded: boolean;
   error: string;
 }
 
-export class RecipesPage extends Component<{}, State> {
+export class RecipesPage extends Component<ComponentProps, State> {
   state: State = { recipes: [], isLoaded: false, error: "" };
 
   componentDidMount() {

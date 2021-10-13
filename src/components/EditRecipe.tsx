@@ -19,10 +19,17 @@ import { TextAreaInput } from "./form-components/TextAreaInput";
 import { TextInput } from "./form-components/TextInput";
 import Alert from "./ui-components/alert";
 
-interface Props {
+interface Params {
   id: string;
-  jwt: string;
 }
+
+interface ComponentProps {
+  jwt?: string;
+}
+
+export interface RouteProps extends RouteComponentProps<Params> {}
+
+interface Props extends RouteProps, ComponentProps {}
 
 type AlertState = {
   type: "alert-success" | "alert-danger" | "d-none";
@@ -39,16 +46,8 @@ interface State {
   alert: AlertState;
 }
 
-const newRecipeIngredient = (): RecipeIngredientInputDto => {
-  return {
-    ingredientId: "",
-    quantity: "",
-  };
-};
-
-// FIXME: this is wrong -> RouteComponentProps<Props> & Props
-export class EditRecipe extends Component<RouteComponentProps<Props> & Props, State> {
-  constructor(props: RouteComponentProps<Props> & Props) {
+export class EditRecipe extends Component<Props, State> {
+  constructor(props: Props) {
     super(props);
 
     this.state = {
@@ -441,5 +440,12 @@ export class EditRecipe extends Component<RouteComponentProps<Props> & Props, St
     );
   }
 }
+
+const newRecipeIngredient = (): RecipeIngredientInputDto => {
+  return {
+    ingredientId: "",
+    quantity: "",
+  };
+};
 
 export default EditRecipe;

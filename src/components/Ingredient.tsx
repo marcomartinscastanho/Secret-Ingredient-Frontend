@@ -3,9 +3,17 @@ import { RouteComponentProps } from "react-router";
 import { Link } from "react-router-dom";
 import { RecipeOutputDto } from "../types/dtos.type";
 
-interface Props {
+interface Params {
   id: string;
 }
+
+interface ComponentProps {
+  jwt: string;
+}
+
+export interface RouteProps extends RouteComponentProps<Params> {}
+
+interface Props extends RouteProps, ComponentProps {}
 
 interface State {
   recipes: RecipeOutputDto[];
@@ -13,7 +21,7 @@ interface State {
   error: string;
 }
 
-export class Ingredient extends Component<RouteComponentProps<Props>, State> {
+export class Ingredient extends Component<Props, State> {
   state: State = { recipes: [], isLoaded: false, error: "" };
 
   componentDidMount() {
