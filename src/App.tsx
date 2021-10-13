@@ -12,7 +12,7 @@ import { Home } from "./components/Home";
 import { Ingredient } from "./components/Ingredient";
 import { IngredientsPage } from "./components/IngredientsPage";
 import { Login } from "./components/Login";
-import { Recipe } from "./components/Recipe";
+import { Recipe, RouteProps as RecipeRouteProps } from "./components/Recipe";
 import { RecipesPage } from "./components/RecipesPage";
 import { Register } from "./components/Register";
 import { Tag } from "./components/Tag";
@@ -119,7 +119,12 @@ export class App extends Component<{}, State> {
                     <EditRecipe {...props} jwt={this.state.jwt} />
                   )}
                 />
-                <Route path="/recipe/:id" component={Recipe} />
+                <Route
+                  path="/recipe/:id"
+                  component={(props: RecipeRouteProps) => (
+                    <Recipe {...props} jwt={this.state.jwt} />
+                  )}
+                />
                 <Route
                   path="/recipes"
                   component={(props: {}) => <RecipesPage {...props} jwt={this.state.jwt} />}

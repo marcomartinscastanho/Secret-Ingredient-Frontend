@@ -7,7 +7,7 @@ interface Params {
 }
 
 interface ComponentProps {
-  jwt: string;
+  jwt?: string;
 }
 
 export interface RouteProps extends RouteComponentProps<Params> {}
@@ -39,7 +39,10 @@ export class Recipe extends Component<Props, State> {
   };
 
   componentDidMount() {
-    fetch("http://localhost:19061/v1/recipes/" + this.props.match.params.id)
+    const headers = new Headers();
+    headers.append("Authorization", "Bearer " + this.props.jwt);
+
+    fetch("http://localhost:19061/v1/recipes/" + this.props.match.params.id, { headers })
       .then((response) => {
         if (response.status !== 200) {
           this.setState({ error: "Invalid response code: " + response.status });
