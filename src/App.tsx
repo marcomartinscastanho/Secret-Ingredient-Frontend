@@ -54,6 +54,7 @@ export class App extends Component<{}, State> {
                 <Link to="/register">Registar</Link>
               </div>
             )}
+            {/** TODO: when a user is logged in, replace this button with "Olá <name>" */}
             <div className="col mt-3 text-end">{loginLink}</div>
             <hr className="mb-3"></hr>
           </div>
@@ -84,6 +85,9 @@ export class App extends Component<{}, State> {
                     </Fragment>
                   )}
                 </ul>
+                <div className="mt-3">
+                  <pre>{JSON.stringify(this.state, null, 3)}</pre>
+                </div>
               </nav>
             </div>
             <div className="col-md-10">

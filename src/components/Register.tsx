@@ -1,6 +1,11 @@
 import React, { Component, Fragment } from "react";
+import { RouteComponentProps } from "react-router-dom";
 import TextInput from "./form-components/TextInput";
 import Alert from "./ui-components/alert";
+
+type Props = {
+  handleJwtChange: (jwt: string) => void;
+};
 
 type AlertState = {
   type: "alert-success" | "alert-danger" | "d-none";
@@ -18,8 +23,8 @@ interface State {
   alert: AlertState;
 }
 
-export class Register extends Component<{}, State> {
-  constructor(props: {}) {
+export class Register extends Component<RouteComponentProps & Props, State> {
+  constructor(props: RouteComponentProps & Props) {
     super(props);
 
     this.state = {
@@ -117,11 +122,14 @@ export class Register extends Component<{}, State> {
         if (data.error) {
           this.setState({ alert: { type: "alert-danger", message: data.message } });
         } else {
-          console.log(data);
-
-          // this.props.history.push({ pathname: "/admin" });
+          this.handleJwtChange(data.accessToken);
+          this.props.history.push({ pathname: "/admin" });
         }
       });
+  };
+
+  handleJwtChange = (jwt: string) => {
+    this.props.handleJwtChange(jwt);
   };
 
   hasError(key: string) {
@@ -179,6 +187,10 @@ export class Register extends Component<{}, State> {
 
           <button className="btn btn-primary">Registar</button>
         </form>
+
+        <div className="mt-3">
+          <pre>{JSON.stringify(this.state, null, 3)}</pre>
+        </div>
       </Fragment>
     );
   }
