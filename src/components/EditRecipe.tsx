@@ -285,6 +285,20 @@ export class EditRecipe extends Component<RouteComponentProps<Props>, State> {
       });
   }
 
+  deleteRecipe(id: string) {
+    fetch("http://localhost:19061/v1/recipes/" + id, {
+      method: "DELETE",
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.error) {
+          this.setState({ alert: { type: "alert-danger", message: data.message } });
+        } else {
+          this.props.history.push({ pathname: "/admin" });
+        }
+      });
+  }
+
   componentDidMount() {
     this.getIngredients();
     this.getTags();
@@ -298,15 +312,15 @@ export class EditRecipe extends Component<RouteComponentProps<Props>, State> {
   }
 
   confirmDelete = () => {
-    console.log("Would delete recipe id", this.state.recipe.id);
-
     confirmAlert({
       title: "Eliminar Receita?",
       message: "Tem a certeza?",
       buttons: [
         {
           label: "Sim",
-          onClick: () => alert("Click Yes"),
+          onClick: () => {
+            this.state.recipe.id && this.deleteRecipe(this.state.recipe.id);
+          },
         },
         {
           label: "Não",
