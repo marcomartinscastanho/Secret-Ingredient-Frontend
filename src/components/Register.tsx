@@ -8,20 +8,26 @@ type AlertState = {
 };
 
 interface State {
+  name: string;
   username: string;
+  useDefaultUsername: boolean;
   password: string;
+  passwordConfirmation: string;
   error?: string;
   errors: string[];
   alert: AlertState;
 }
 
-export class Login extends Component<{}, State> {
+export class Register extends Component<{}, State> {
   constructor(props: {}) {
     super(props);
 
     this.state = {
+      name: "",
       username: "",
+      useDefaultUsername: true,
       password: "",
+      passwordConfirmation: "",
       errors: [],
       alert: { type: "d-none", message: "" },
     };
@@ -30,20 +36,53 @@ export class Login extends Component<{}, State> {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
+  generateUsername = (name: string) => {
+    const names: string[] = name.split(" ");
+    return names
+      .map((n: string, i: number) => {
+        if (i < names.length - 1) {
+          return n[0];
+        } else {
+          return n;
+        }
+      })
+      .join()
+      .toLowerCase()
+      .normalize("NFKD")
+      .replace(/[^\w]/g, "");
+  };
+
   handleChange = (event: any) => {
     const { name, value } = event.target;
 
     this.setState((prevState) => ({ ...prevState, [name]: value }));
+
+    if (name === "username") {
+      this.setState({ useDefaultUsername: false });
+    }
+
+    if (name === "name" && this.state.useDefaultUsername) {
+      this.setState({ username: this.generateUsername(value) });
+    }
   };
 
   isInputValid = () => {
     // client side validation
     const errors = [];
+    if (this.state.name === "") {
+      errors.push("name");
+    }
     if (this.state.username === "") {
       errors.push("username");
     }
     if (this.state.password === "") {
       errors.push("password");
+    }
+    if (this.state.passwordConfirmation === "") {
+      errors.push("password-confirmation");
+    }
+    if (this.state.password !== this.state.passwordConfirmation) {
+      errors.push("password-confirmation");
     }
 
     this.setState({ errors });
@@ -68,7 +107,7 @@ export class Login extends Component<{}, State> {
       body: JSON.stringify(payload),
     };
 
-    fetch("http://localhost:19061/v1/auth/login", requestOptions)
+    fetch("http://localhost:19061/v1/auth/register", requestOptions)
       .then((response) => response.json())
       .then((data) => {
         if (data.error) {
@@ -86,19 +125,29 @@ export class Login extends Component<{}, State> {
   }
 
   render() {
-    const { alert } = this.state;
+    const { name, username, password, passwordConfirmation, alert } = this.state;
 
     return (
       <Fragment>
-        <h2>Login</h2>
+        <h2>Registar</h2>
         <hr />
         <Alert type={alert.type} message={alert.message} />
 
         <form className="pt-3" onSubmit={this.handleSubmit}>
           <TextInput
             type="text"
+            title="Nome"
+            name="name"
+            value={name}
+            onChange={this.handleChange}
+            hasError={this.hasError("name")}
+            errorMessage="Por favor insira um nome"
+          />
+          <TextInput
+            type="text"
             title="Nome de Utilizador"
             name="username"
+            value={username}
             onChange={this.handleChange}
             hasError={this.hasError("username")}
             errorMessage="Por favor insira um nome de utilizador"
@@ -107,18 +156,28 @@ export class Login extends Component<{}, State> {
             type="password"
             title="Password"
             name="password"
+            value={password}
             onChange={this.handleChange}
             hasError={this.hasError("password")}
             errorMessage="Por favor insira uma password"
           />
+          <TextInput
+            type="password"
+            title="Confirme a password"
+            name="passwordConfirmation"
+            value={passwordConfirmation}
+            onChange={this.handleChange}
+            hasError={this.hasError("password-confirmation")}
+            errorMessage="As passwords não coincidem"
+          />
 
           <hr />
 
-          <button className="btn btn-primary">Login</button>
+          <button className="btn btn-primary">Registar</button>
         </form>
       </Fragment>
     );
   }
 }
 
-export default Login;
+export default Register;

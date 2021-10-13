@@ -5,9 +5,10 @@ import { EditRecipe } from "./components/EditRecipe";
 import { Home } from "./components/Home";
 import { Ingredient } from "./components/Ingredient";
 import { IngredientsPage } from "./components/IngredientsPage";
-import Login from "./components/Login";
+import { Login } from "./components/Login";
 import { Recipe } from "./components/Recipe";
 import { RecipesPage } from "./components/RecipesPage";
+import { Register } from "./components/Register";
 import { Tag } from "./components/Tag";
 import { TagsPage } from "./components/TagsPage";
 
@@ -45,9 +46,14 @@ export class App extends Component<{}, State> {
       <Router>
         <div className="container">
           <div className="row">
-            <div className="col mt-3">
+            <div className="col-md-10 mt-3">
               <h1 className="mt-3">Ingrediente Secreto</h1>
             </div>
+            {!this.state.jwt && (
+              <div className="col mt-3 text-end">
+                <Link to="/register">Registar</Link>
+              </div>
+            )}
             <div className="col mt-3 text-end">{loginLink}</div>
             <hr className="mb-3"></hr>
           </div>
@@ -82,6 +88,13 @@ export class App extends Component<{}, State> {
             </div>
             <div className="col-md-10">
               <Switch>
+                <Route
+                  exact
+                  path="/register"
+                  component={(props: any) => (
+                    <Register {...props} handleJwtChange={this.handleJwtChange} />
+                  )}
+                />
                 <Route
                   exact
                   path="/login"
