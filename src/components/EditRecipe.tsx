@@ -1,5 +1,4 @@
 import React, { Component, Fragment } from "react";
-import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import { RouteComponentProps } from "react-router";
 import { Link } from "react-router-dom";
@@ -382,16 +381,17 @@ export class EditRecipe extends Component<Props, State> {
 
           <hr />
 
-          <button className="btn btn-primary">Guardar</button>
-
-          <Link to={`/recipe/${recipe.id}`} className="btn btn-warning ms-1">
-            Cancelar
-          </Link>
+          <div className="d-flex justify-content-center mb-5">
+            <button className="btn btn-primary">Guardar</button>
+            <Link to={`/recipe/${recipe.id}`} className="btn btn-warning ms-2">
+              Cancelar
+            </Link>
+          </div>
         </form>
 
-        <div className="mt-3">
+        {/* <div className="mt-3">
           <pre>{JSON.stringify(this.state, null, 3)}</pre>
-        </div>
+        </div> */}
       </Fragment>
     );
   }

@@ -120,7 +120,7 @@ export class Register extends Component<Props, State> {
           this.setState({ alert: { type: "alert-danger", message: data.message } });
         } else {
           this.handleJwtChange(data.accessToken);
-          this.props.history.push({ pathname: "/admin" });
+          this.props.history.push({ pathname: "/recipes" });
         }
       });
   };
@@ -185,9 +185,9 @@ export class Register extends Component<Props, State> {
           <button className="btn btn-primary">Registar</button>
         </form>
 
-        <div className="mt-3">
+        {/* <div className="mt-3">
           <pre>{JSON.stringify(this.state, null, 3)}</pre>
-        </div>
+        </div> */}
       </Fragment>
     );
   }

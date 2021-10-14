@@ -180,13 +180,15 @@ export class Recipe extends Component<Props, State> {
 
           <hr />
 
-          <button className="btn btn-primary">Imprimir</button>
-          <Link to={`/recipe/edit/${recipe.id}`} className="btn btn-warning ms-1">
-            Editar
-          </Link>
-          <a href="#!" onClick={() => this.confirmDelete()} className="btn btn-danger ms-1">
-            Eliminar
-          </a>
+          <div className="d-flex justify-content-center mb-5">
+            <button className="btn btn-primary">Imprimir</button>
+            <Link to={`/recipe/edit/${recipe.id}`} className="btn btn-warning ms-2">
+              Editar
+            </Link>
+            <a href="#!" onClick={() => this.confirmDelete()} className="btn btn-danger ms-2">
+              Eliminar
+            </a>
+          </div>
         </Fragment>
       );
     }

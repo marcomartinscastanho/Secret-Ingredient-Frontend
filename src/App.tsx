@@ -40,29 +40,35 @@ export class App extends Component<{}, State> {
   };
 
   render() {
-    const loginLink = this.state.jwt ? (
-      <Link to="/logout" onClick={this.logout}>
-        Logout
+    const loginButton = this.state.jwt ? (
+      <Link to="/logout" className="btn btn-danger ms-2" onClick={this.logout}>
+        Saír
       </Link>
     ) : (
-      <Link to="/login">Login</Link>
+      <Link to="/login" className="btn btn-primary ms-2">
+        Entrar
+      </Link>
     );
 
     return (
       <Router>
         <div className="container">
           <div className="row">
-            <div className="col-md-10 mt-3">
+            <div className="col mt-3">
               <h1 className="mt-3">Ingrediente Secreto</h1>
             </div>
-            {!this.state.jwt && (
-              <div className="col mt-3 text-end">
-                <Link to="/register">Registar</Link>
+            <div className="col-md-5 row mt-3 text-end">
+              <div className="col mt-3">
+                {/** TODO: when a user is logged in, replace this button with "Olá <name>" */}
+                {!this.state.jwt && (
+                  <Link to="/register" className="btn btn-primary">
+                    Registar
+                  </Link>
+                )}
+                {loginButton}
               </div>
-            )}
-            {/** TODO: when a user is logged in, replace this button with "Olá <name>" */}
-            <div className="col mt-3 text-end">{loginLink}</div>
-            <hr className="mb-3"></hr>
+            </div>
+            <hr className="mb-3" />
           </div>
           <div className="row">
             <div className="col-md-2">
@@ -91,9 +97,6 @@ export class App extends Component<{}, State> {
                     </Fragment>
                   )}
                 </ul>
-                <div className="mt-3">
-                  <pre>{JSON.stringify(this.state, null, 3)}</pre>
-                </div>
               </nav>
             </div>
             <div className="col-md-10">
