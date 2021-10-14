@@ -40,8 +40,30 @@ interface NewIngredientState {
   index: number;
 }
 
+interface RecipeState {
+  id?: string;
+
+  title: string;
+
+  portions?: number;
+
+  tags: TagOption[];
+
+  description: string;
+
+  preparationTime?: number;
+
+  cookingTime?: number;
+
+  ingredients: RecipeIngredientInputDto[];
+
+  preparationSteps: string[];
+
+  user?: string;
+}
+
 interface State {
-  recipe: RecipeInputDto;
+  recipe: RecipeState;
   ingredients: IngredientOutputDto[];
   tags: TagOutputDto[];
   isLoaded: boolean;
@@ -176,22 +198,28 @@ export class EditRecipe extends Component<Props, State> {
     headers.append("Content-Type", "application/json");
     headers.append("Authorization", "Bearer " + this.props.jwt);
 
+    const body: RecipeInputDto = {
+      ...this.state.recipe,
+      tagIds: this.state.recipe.tags.map((tag) => tag.value),
+      ingredients: this.state.recipe.ingredients.filter(
+        (ingredient) =>
+          ingredient.quantity !== "" ||
+          ingredient.ingredientId !== "" ||
+          ingredient.specification !== ""
+      ),
+      preparationSteps: this.state.recipe.preparationSteps.filter((step) => step !== ""),
+    };
+
     const requestOptions = {
       method: "POST",
       headers,
-      body: JSON.stringify(
-        {
-          ...this.state.recipe,
-          tagIds: this.state.recipe.tags.map((tag) => tag.value),
-        },
-        (key, value) => {
-          if (key === "quantity") {
-            return `${value}`;
-          }
-
-          return isNaN(value) ? value : +value;
+      body: JSON.stringify(body, (key, value) => {
+        if (key === "quantity") {
+          return `${value}`;
         }
-      ),
+
+        return isNaN(value) ? value : +value;
+      }),
     };
 
     fetch("http://localhost:19061/v1/recipes", requestOptions)
@@ -210,22 +238,28 @@ export class EditRecipe extends Component<Props, State> {
     headers.append("Content-Type", "application/json");
     headers.append("Authorization", "Bearer " + this.props.jwt);
 
+    const body: RecipeInputDto = {
+      ...this.state.recipe,
+      tagIds: this.state.recipe.tags.map((tag) => tag.value),
+      ingredients: this.state.recipe.ingredients.filter(
+        (ingredient) =>
+          ingredient.quantity !== "" ||
+          ingredient.ingredientId !== "" ||
+          ingredient.specification !== ""
+      ),
+      preparationSteps: this.state.recipe.preparationSteps.filter((step) => step !== ""),
+    };
+
     const requestOptions = {
       method: "PATCH",
       headers,
-      body: JSON.stringify(
-        {
-          ...this.state.recipe,
-          tagIds: this.state.recipe.tags.map((tag) => tag.value),
-        },
-        (key, value) => {
-          if (key === "quantity") {
-            return `${value}`;
-          }
-
-          return isNaN(value) ? value : +value;
+      body: JSON.stringify(body, (key, value) => {
+        if (key === "quantity") {
+          return `${value}`;
         }
-      ),
+
+        return isNaN(value) ? value : +value;
+      }),
     };
 
     fetch(`http://localhost:19061/v1/recipes/${id}`, requestOptions)

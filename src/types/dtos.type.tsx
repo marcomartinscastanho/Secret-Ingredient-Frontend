@@ -5,7 +5,7 @@ export type RecipeInputDto = {
 
   portions?: number;
 
-  tags: TagOption[];
+  tagIds: string[];
 
   description: string;
 
