@@ -17,7 +17,7 @@ import { RecipeIngredientsInput } from "./form-components/RecipeIngredientsInput
 import { TagsSelect } from "./form-components/TagsSelect";
 import { TextAreaInput } from "./form-components/TextAreaInput";
 import { TextInput } from "./form-components/TextInput";
-import Alert from "./ui-components/alert";
+import { Alert, Props as AlertProps } from "./ui-components/alert";
 
 interface Params {
   id: string;
@@ -31,11 +31,6 @@ export interface RouteProps extends RouteComponentProps<Params> {}
 
 interface Props extends RouteProps, ComponentProps {}
 
-type AlertState = {
-  type: "alert-success" | "alert-danger" | "d-none";
-  message: string;
-};
-
 interface State {
   recipe: RecipeInputDto;
   ingredients: IngredientOutputDto[];
@@ -43,7 +38,7 @@ interface State {
   isLoaded: boolean;
   error: string;
   errors: string[];
-  alert: AlertState;
+  alert: AlertProps;
 }
 
 export class EditRecipe extends Component<Props, State> {
@@ -300,20 +295,6 @@ export class EditRecipe extends Component<Props, State> {
       });
   }
 
-  deleteRecipe(id: string) {
-    fetch("http://localhost:19061/v1/recipes/" + id, {
-      method: "DELETE",
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.error) {
-          this.setState({ alert: { type: "alert-danger", message: data.message } });
-        } else {
-          this.props.history.push({ pathname: "/admin" });
-        }
-      });
-  }
-
   componentDidMount() {
     this.getIngredients();
     this.getTags();
@@ -325,25 +306,6 @@ export class EditRecipe extends Component<Props, State> {
       this.setState({ isLoaded: true });
     }
   }
-
-  confirmDelete = () => {
-    confirmAlert({
-      title: "Eliminar Receita?",
-      message: "Tem a certeza?",
-      buttons: [
-        {
-          label: "Sim",
-          onClick: () => {
-            this.state.recipe.id && this.deleteRecipe(this.state.recipe.id);
-          },
-        },
-        {
-          label: "Não",
-          onClick: () => {},
-        },
-      ],
-    });
-  };
 
   render() {
     const { recipe, tags, ingredients, isLoaded, error, alert } = this.state;
@@ -421,14 +383,10 @@ export class EditRecipe extends Component<Props, State> {
           <hr />
 
           <button className="btn btn-primary">Guardar</button>
-          <Link to="/admin" className="btn btn-warning ms-1">
+
+          <Link to={`/recipe/${recipe.id}`} className="btn btn-warning ms-1">
             Cancelar
           </Link>
-          {recipe.id && (
-            <a href="#!" onClick={() => this.confirmDelete()} className="btn btn-danger ms-1">
-              Eliminar
-            </a>
-          )}
         </form>
 
         <div className="mt-3">

@@ -1,18 +1,13 @@
 import React, { Component, Fragment } from "react";
 import { RouteComponentProps } from "react-router-dom";
-import TextInput from "./form-components/TextInput";
-import Alert from "./ui-components/alert";
+import { TextInput } from "./form-components/TextInput";
+import { Alert, Props as AlertProps } from "./ui-components/alert";
 
 interface ComponentProps {
   handleJwtChange: (jwt: string) => void;
 }
 
 interface Props extends RouteComponentProps, ComponentProps {}
-
-type AlertState = {
-  type: "alert-success" | "alert-danger" | "d-none";
-  message: string;
-};
 
 interface State {
   name: string;
@@ -22,7 +17,7 @@ interface State {
   passwordConfirmation: string;
   error?: string;
   errors: string[];
-  alert: AlertState;
+  alert: AlertProps;
 }
 
 export class Register extends Component<Props, State> {

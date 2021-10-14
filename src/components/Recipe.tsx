@@ -1,6 +1,9 @@
 import React, { Component, Fragment } from "react";
+import { confirmAlert } from "react-confirm-alert";
 import { RouteComponentProps } from "react-router";
+import { Link } from "react-router-dom";
 import { RecipeOutputDto } from "../types/dtos.type";
+import { Alert, Props as AlertProps } from "./ui-components/alert";
 
 interface Params {
   id: string;
@@ -18,6 +21,7 @@ interface State {
   recipe: RecipeOutputDto;
   isLoaded: boolean;
   error: string;
+  alert: AlertProps;
 }
 
 export class Recipe extends Component<Props, State> {
@@ -36,6 +40,10 @@ export class Recipe extends Component<Props, State> {
     },
     isLoaded: false,
     error: "",
+    alert: {
+      type: "d-none",
+      message: "",
+    },
   };
 
   componentDidMount() {
@@ -57,8 +65,41 @@ export class Recipe extends Component<Props, State> {
       });
   }
 
+  deleteRecipe(id: string) {
+    fetch("http://localhost:19061/v1/recipes/" + id, {
+      method: "DELETE",
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.error) {
+          this.setState({ alert: { type: "alert-danger", message: data.message } });
+        } else {
+          this.props.history.push({ pathname: "/admin" });
+        }
+      });
+  }
+
+  confirmDelete = () => {
+    confirmAlert({
+      title: "Eliminar Receita?",
+      message: "Tem a certeza?",
+      buttons: [
+        {
+          label: "Sim",
+          onClick: () => {
+            this.deleteRecipe(this.state.recipe.id);
+          },
+        },
+        {
+          label: "Não",
+          onClick: () => {},
+        },
+      ],
+    });
+  };
+
   render() {
-    const { recipe, isLoaded, error } = this.state;
+    const { recipe, isLoaded, error, alert } = this.state;
 
     if (error) {
       return <div>Erro: {error}</div>;
@@ -81,6 +122,8 @@ export class Recipe extends Component<Props, State> {
           </div>
           <div className="clearfix"></div>
           <hr />
+
+          <Alert type={alert.type} message={alert.message} />
 
           <table className="table table-compact table-striped">
             <thead></thead>
@@ -134,6 +177,16 @@ export class Recipe extends Component<Props, State> {
               ))}
             </tbody>
           </table>
+
+          <hr />
+
+          <button className="btn btn-primary">Imprimir</button>
+          <Link to={`/recipe/edit/${recipe.id}`} className="btn btn-warning ms-1">
+            Editar
+          </Link>
+          <a href="#!" onClick={() => this.confirmDelete()} className="btn btn-danger ms-1">
+            Eliminar
+          </a>
         </Fragment>
       );
     }
