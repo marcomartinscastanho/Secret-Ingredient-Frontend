@@ -383,7 +383,7 @@ export class EditRecipe extends Component<Props, State> {
 
           <div className="d-flex justify-content-center mb-5">
             <button className="btn btn-primary">Guardar</button>
-            <Link to={`/recipe/${recipe.id}`} className="btn btn-warning ms-2">
+            <Link to={`/recipe/${recipe.id}`} className="btn btn-secondary ms-2">
               Cancelar
             </Link>
           </div>

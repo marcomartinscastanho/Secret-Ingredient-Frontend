@@ -73,30 +73,30 @@ export class App extends Component<{}, State> {
           <div className="row">
             <div className="col-md-2">
               <nav>
-                <ul className="list-group">
-                  <li className="list-group-item">
-                    <Link to="/">Início</Link>
-                  </li>
-                  <li className="list-group-item">
-                    <Link to="/ingredients">Ingredientes</Link>
-                  </li>
-                  <li className="list-group-item">
-                    <Link to="/tags">Etiquetas</Link>
-                  </li>
+                <div className="list-group">
+                  <Link className="list-group-item list-group-item-action" to="/">
+                    Início
+                  </Link>
+                  <Link className="list-group-item list-group-item-action" to="/ingredients">
+                    Ingredientes
+                  </Link>
+                  <Link className="list-group-item list-group-item-action" to="/tags">
+                    Etiquetas
+                  </Link>
                   {this.state.jwt && (
                     <Fragment>
-                      <li className="list-group-item">
-                        <Link to="/recipes">Minhas Receitas</Link>
-                      </li>
-                      <li className="list-group-item">
-                        <Link to="/recipe/edit/0">Nova Receita</Link>
-                      </li>
-                      <li className="list-group-item">
-                        <Link to="/admin">Editar Receitas</Link>
-                      </li>
+                      <Link className="list-group-item list-group-item-action" to="/recipes">
+                        Minhas Receitas
+                      </Link>
+                      <Link className="list-group-item list-group-item-action" to="/recipe/edit/0">
+                        Nova Receita
+                      </Link>
+                      <Link className="list-group-item list-group-item-action" to="/admin">
+                        Editar Receitas
+                      </Link>
                     </Fragment>
                   )}
-                </ul>
+                </div>
               </nav>
             </div>
             <div className="col-md-10">
