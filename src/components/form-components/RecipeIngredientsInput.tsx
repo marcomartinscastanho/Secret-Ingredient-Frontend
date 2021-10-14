@@ -7,6 +7,7 @@ interface Props {
   onAddIngredient: () => void;
   onChangeIngredient: (event: ChangeEvent, index: number) => void;
   onRemoveIngredient: (index: number) => void;
+  onCreateNewIngredient: (index: number) => void;
 }
 
 export const RecipeIngredientsInput = (props: Props) => {
@@ -49,7 +50,13 @@ export const RecipeIngredientsInput = (props: Props) => {
               {props.options.map((ingredient) => (
                 <option value={ingredient.id}>{ingredient.name}</option>
               ))}
-              <option value={-1} style={{ backgroundColor: "lightblue" }}>
+              <option
+                value={-1}
+                style={{ backgroundColor: "lightblue" }}
+                onClick={() => {
+                  props.onCreateNewIngredient(index);
+                }}
+              >
                 Criar novo Ingrediente...
               </option>
             </select>
@@ -71,9 +78,9 @@ export const RecipeIngredientsInput = (props: Props) => {
           </div>
           {index === props.recipeIngredients.length - 1 && (
             <div className="col-sm-1 text-end">
-              <button className="btn btn-primary" onClick={props.onAddIngredient}>
+              <div className="btn btn-primary" onClick={props.onAddIngredient}>
                 <strong>&#65291;</strong>
-              </button>
+              </div>
             </div>
           )}
           {index < props.recipeIngredients.length - 1 && (

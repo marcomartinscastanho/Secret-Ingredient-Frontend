@@ -42,7 +42,7 @@ export class App extends Component<{}, State> {
   render() {
     const loginButton = this.state.jwt ? (
       <Link to="/logout" className="btn btn-danger ms-2" onClick={this.logout}>
-        Saír
+        Sair
       </Link>
     ) : (
       <Link to="/login" className="btn btn-primary ms-2">
