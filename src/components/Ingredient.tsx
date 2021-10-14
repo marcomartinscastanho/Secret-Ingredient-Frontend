@@ -4,6 +4,7 @@ import { RouteComponentProps } from "react-router";
 import { Link } from "react-router-dom";
 import { RecipeOutputDto } from "../types/dtos.type";
 import { Jwt } from "../types/jwt.interface";
+import { Alert, Props as AlertProps } from "./ui-components/alert";
 
 interface Params {
   id: string;
@@ -21,14 +22,23 @@ interface State {
   recipes: RecipeOutputDto[];
   isLoaded: boolean;
   error: string;
+  alert: AlertProps;
 }
 
 export class Ingredient extends Component<Props, State> {
-  state: State = { recipes: [], isLoaded: false, error: "" };
+  state: State = {
+    recipes: [],
+    isLoaded: false,
+    error: "",
+    alert: { type: "d-none", message: "" },
+  };
 
   componentDidMount() {
     if (!this.props.jwt) {
-      this.setState({ error: "Missing jwt" });
+      this.setState({
+        alert: { type: "alert-danger", message: "Precisa de se registar para ver as receitas!" },
+        isLoaded: true,
+      });
       return;
     }
 
@@ -57,7 +67,7 @@ export class Ingredient extends Component<Props, State> {
   }
 
   render() {
-    const { recipes, isLoaded, error } = this.state;
+    const { recipes, isLoaded, error, alert } = this.state;
     if (error) {
       return <div>Erro: {error}</div>;
     } else if (!isLoaded) {
@@ -67,6 +77,9 @@ export class Ingredient extends Component<Props, State> {
         <Fragment>
           {/** TODO: this should be the name of the ingredient instead of the Id */}
           <h2>Receitas com {this.props.match.params.id}</h2>
+          <hr />
+
+          <Alert type={alert.type} message={alert.message} />
 
           <div className="list-group">
             {recipes.map((recipe) => (
