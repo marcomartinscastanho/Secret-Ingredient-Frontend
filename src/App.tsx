@@ -9,13 +9,13 @@ import {
 import { Admin, RouteProps as AdminRouteProps } from "./components/Admin";
 import { EditRecipe, RouteProps as EditRecipeRouteProps } from "./components/EditRecipe";
 import { Home } from "./components/Home";
-import { Ingredient } from "./components/Ingredient";
+import { Ingredient, RouteProps as IngredientRouteProps } from "./components/Ingredient";
 import { IngredientsPage } from "./components/IngredientsPage";
 import { Login } from "./components/Login";
 import { Recipe, RouteProps as RecipeRouteProps } from "./components/Recipe";
 import { RecipesPage } from "./components/RecipesPage";
 import { Register } from "./components/Register";
-import { Tag } from "./components/Tag";
+import { Tag, RouteProps as TagRouteProps } from "./components/Tag";
 import { TagsPage } from "./components/TagsPage";
 
 interface State {
@@ -130,12 +130,20 @@ export class App extends Component<{}, State> {
                   component={(props: {}) => <RecipesPage {...props} jwt={this.state.jwt} />}
                 />
 
-                <Route path="/ingredients/:id" component={Ingredient} />
+                <Route
+                  path="/ingredients/:id"
+                  component={(props: IngredientRouteProps) => (
+                    <Ingredient {...props} jwt={this.state.jwt} />
+                  )}
+                />
                 <Route exact path="/ingredients">
                   <IngredientsPage />
                 </Route>
 
-                <Route path="/tags/:id" component={Tag} />
+                <Route
+                  path="/tags/:id"
+                  component={(props: TagRouteProps) => <Tag {...props} jwt={this.state.jwt} />}
+                />
                 <Route path="/tags">
                   <TagsPage />
                 </Route>
