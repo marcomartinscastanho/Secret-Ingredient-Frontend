@@ -66,15 +66,19 @@ export class Recipe extends Component<Props, State> {
   }
 
   deleteRecipe(id: string) {
+    const headers = new Headers();
+    headers.append("Authorization", "Bearer " + this.props.jwt);
+
     fetch("http://localhost:19061/v1/recipes/" + id, {
       method: "DELETE",
+      headers,
     })
       .then((response) => response.json())
       .then((data) => {
         if (data.error) {
           this.setState({ alert: { type: "alert-danger", message: data.message } });
         } else {
-          this.props.history.push({ pathname: "/admin" });
+          this.props.history.push({ pathname: "/recipes" });
         }
       });
   }

@@ -5,7 +5,7 @@ export type RecipeInputDto = {
 
   portions?: number;
 
-  tagIds: string[];
+  tags: TagOption[];
 
   description: string;
 
@@ -85,4 +85,9 @@ export type IngredientOutputDto = {
 export type RestError = {
   error?: any;
   message: string;
+};
+
+export type TagOption = {
+  label: string;
+  value: string;
 };

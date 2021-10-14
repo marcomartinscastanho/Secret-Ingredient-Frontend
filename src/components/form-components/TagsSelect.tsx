@@ -1,9 +1,14 @@
-import { ChangeEvent } from "react";
-import { TagOutputDto } from "../../types/dtos.type";
+import { TagOption, TagOutputDto } from "../../types/dtos.type";
+import CreatableSelect from "react-select/creatable";
+import { ActionMeta, OnChangeValue } from "react-select";
 
 interface Props {
-  value?: string[];
-  onChange?: (event: ChangeEvent) => void;
+  value?: TagOption[];
+  handleChange?: (
+    newValue: OnChangeValue<TagOption, true>,
+    actionMeta: ActionMeta<TagOption>
+  ) => void;
+  handleCreateOption?: (newTag: string) => void;
   options: TagOutputDto[];
 }
 
@@ -13,26 +18,19 @@ export const TagsSelect = (props: Props) => {
       <label htmlFor="tags" className="form-label">
         Etiquetas
       </label>
-      <select
-        multiple
-        size={4}
-        className="form-select"
-        id="tags"
+      <CreatableSelect
+        isMulti
         name="tags"
+        id="tags"
         value={props.value}
-        onChange={props.onChange}
-      >
-        {props.options.map((tag) => (
-          <option value={tag.id}>{tag.name}</option>
-        ))}
-        <option value={-1} style={{ backgroundColor: "lightblue" }}>
-          Criar nova Etiqueta...
-        </option>
-      </select>
-      <small>
-        Para seleccionar várias Etiquetas, mantenha a tecla <strong>Ctrl</strong> carregada antes de
-        seleccionar cada Etiqueta.
-      </small>
+        onChange={props.handleChange}
+        onCreateOption={props.handleCreateOption}
+        options={props.options.map((tag) => ({ value: tag.id, label: tag.name }))}
+        placeholder="Seleccione uma ou mais Etiquetas"
+        formatCreateLabel={(inputValue) => {
+          return `Criar a Etiqueta "${inputValue}"`;
+        }}
+      />
     </div>
   );
 };

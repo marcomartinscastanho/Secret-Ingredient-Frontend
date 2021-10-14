@@ -8,6 +8,7 @@ import {
   RecipeInputDto,
   RecipeOutputDto,
   RestError,
+  TagOption,
   TagOutputDto,
 } from "../types/dtos.type";
 import "./EditRecipe.css";
@@ -19,6 +20,7 @@ import { TagsSelect } from "./form-components/TagsSelect";
 import { TextAreaInput } from "./form-components/TextAreaInput";
 import { TextInput } from "./form-components/TextInput";
 import { Alert, Props as AlertProps } from "./ui-components/alert";
+import { ActionMeta, OnChangeValue } from "react-select";
 
 interface Params {
   id: string;
@@ -57,7 +59,7 @@ export class EditRecipe extends Component<Props, State> {
       recipe: {
         title: "",
         portions: undefined,
-        tagIds: [],
+        tags: [],
         description: "",
         cookingTime: undefined,
         preparationTime: undefined,
@@ -88,6 +90,7 @@ export class EditRecipe extends Component<Props, State> {
     this.handleRemovePreparationStep = this.handleRemovePreparationStep.bind(this);
     this.handleChangePreparationStep = this.handleChangePreparationStep.bind(this);
     this.handleChangeTags = this.handleChangeTags.bind(this);
+    this.handleCreateTag = this.handleCreateTag.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
@@ -156,7 +159,7 @@ export class EditRecipe extends Component<Props, State> {
         this.setState({
           recipe: {
             ...jsonRes,
-            tagIds: jsonRes.tags.map((tag) => tag.id),
+            tags: jsonRes.tags.map((tag) => ({ value: tag.id, label: tag.name })),
             ingredients: jsonRes.ingredients.map((recipeIngredient) => ({
               quantity: recipeIngredient.quantity,
               ingredientId: recipeIngredient.ingredient.id,
@@ -176,13 +179,19 @@ export class EditRecipe extends Component<Props, State> {
     const requestOptions = {
       method: "POST",
       headers,
-      body: JSON.stringify(this.state.recipe, (key, value) => {
-        if (key === "quantity") {
-          return `${value}`;
-        }
+      body: JSON.stringify(
+        {
+          ...this.state.recipe,
+          tagIds: this.state.recipe.tags.map((tag) => tag.value),
+        },
+        (key, value) => {
+          if (key === "quantity") {
+            return `${value}`;
+          }
 
-        return isNaN(value) ? value : +value;
-      }),
+          return isNaN(value) ? value : +value;
+        }
+      ),
     };
 
     fetch("http://localhost:19061/v1/recipes", requestOptions)
@@ -204,13 +213,19 @@ export class EditRecipe extends Component<Props, State> {
     const requestOptions = {
       method: "PATCH",
       headers,
-      body: JSON.stringify(this.state.recipe, (key, value) => {
-        if (key === "quantity") {
-          return `${value}`;
-        }
+      body: JSON.stringify(
+        {
+          ...this.state.recipe,
+          tagIds: this.state.recipe.tags.map((tag) => tag.value),
+        },
+        (key, value) => {
+          if (key === "quantity") {
+            return `${value}`;
+          }
 
-        return isNaN(value) ? value : +value;
-      }),
+          return isNaN(value) ? value : +value;
+        }
+      ),
     };
 
     fetch(`http://localhost:19061/v1/recipes/${id}`, requestOptions)
@@ -238,7 +253,8 @@ export class EditRecipe extends Component<Props, State> {
     );
 
     if (thereAreEmptyIngredients) {
-      // TODO: handle error: can't add more ingredients while there are empty ingredients
+      // can't add more ingredients while there are empty ingredients
+      // TODO: give feedback to the user
       return;
     }
 
@@ -322,8 +338,6 @@ export class EditRecipe extends Component<Props, State> {
               });
             })
             .then(() => {
-              console.log(this.state.newIngredient);
-
               const { index } = this.state.newIngredient;
               const updatedRecipe = { ...this.state.recipe };
               const updatedIngredients = [...updatedRecipe.ingredients];
@@ -343,7 +357,8 @@ export class EditRecipe extends Component<Props, State> {
     const thereAreEmptySteps = this.state.recipe.preparationSteps.some((step) => step.length === 0);
 
     if (thereAreEmptySteps) {
-      // TODO: handle error: can't add more preparationSteps while there are empty preparationSteps
+      // can't add more preparationSteps while there are empty preparationSteps
+      // TODO: give feedback to the user
       return;
     }
 
@@ -376,12 +391,60 @@ export class EditRecipe extends Component<Props, State> {
     this.setState({ recipe: updatedRecipe });
   };
 
-  handleChangeTags = (event: any) => {
-    const selected = [...event.target.options].filter((o) => o.selected).map((o) => o.value);
-
+  handleChangeTags = (
+    newValue: OnChangeValue<TagOption, true>,
+    actionMeta: ActionMeta<TagOption>
+  ) => {
     this.setState((prevState) => ({
-      recipe: { ...prevState.recipe, tagIds: selected },
+      recipe: {
+        ...prevState.recipe,
+        tags: newValue.map((v) => ({ value: v.value, label: v.label })),
+      },
     }));
+  };
+
+  handleCreateTag = (newTag: string) => {
+    const headers = new Headers();
+    headers.append("Content-Type", "application/json");
+    headers.append("Authorization", "Bearer " + this.props.jwt);
+
+    const requestOptions = {
+      method: "POST",
+      headers,
+      body: JSON.stringify({ name: newTag }),
+    };
+
+    fetch("http://localhost:19061/v1/tags", requestOptions)
+      .then((response) => response.json())
+      .then((data: TagOutputDto & RestError) => {
+        if (data.error) {
+          this.setState({ alert: { type: "alert-danger", message: data.message } });
+        } else {
+          // update list of tags
+          const headers = new Headers();
+          headers.append("Authorization", "Bearer " + this.props.jwt);
+
+          fetch("http://localhost:19061/v1/tags", { headers })
+            .then((response) => {
+              if (response.status !== 200) {
+                this.setState({ error: "Invalid response code: " + response.status });
+              }
+              return response.json();
+            })
+            .then((jsonRes: { data: TagOutputDto[] }) => {
+              this.setState({
+                tags: jsonRes.data,
+              });
+            })
+            .then(() => {
+              const updatedRecipe = { ...this.state.recipe };
+              const updatedTags = [...updatedRecipe.tags];
+              updatedTags.push({ value: data.id, label: data.name });
+              updatedRecipe.tags = updatedTags;
+              this.setState({ recipe: updatedRecipe });
+            });
+        }
+      });
   };
 
   isInputValid = () => {
@@ -488,7 +551,12 @@ export class EditRecipe extends Component<Props, State> {
             max={20}
             onChange={this.handleChange}
           />
-          <TagsSelect value={recipe.tagIds} onChange={this.handleChangeTags} options={tags} />
+          <TagsSelect
+            value={recipe.tags}
+            handleChange={this.handleChangeTags}
+            handleCreateOption={this.handleCreateTag}
+            options={tags}
+          />
 
           <hr />
 
@@ -504,6 +572,7 @@ export class EditRecipe extends Component<Props, State> {
         </form>
 
         {/* Modals */}
+        {/* New Ingredient Modal */}
         <TextInputModal
           show={this.state.newIngredient.show}
           title="Criar novo Ingrediente"
