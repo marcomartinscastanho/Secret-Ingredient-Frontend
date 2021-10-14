@@ -63,6 +63,12 @@ export class Tag extends Component<Props, State> {
           recipes: jsonRes.data,
           isLoaded: true,
         });
+
+        if (jsonRes.data.length === 0) {
+          this.setState({
+            alert: { type: "alert-warning", message: "Nenhuma receita encontrada" },
+          });
+        }
       });
   }
 

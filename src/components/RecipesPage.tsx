@@ -3,6 +3,7 @@ import React, { Component, Fragment } from "react";
 import { Link } from "react-router-dom";
 import { RecipeOutputDto } from "../types/dtos.type";
 import { Jwt } from "../types/jwt.interface";
+import { Alert, Props as AlertProps } from "./ui-components/alert";
 
 interface ComponentProps {
   jwt?: string;
@@ -12,14 +13,23 @@ interface State {
   recipes: RecipeOutputDto[];
   isLoaded: boolean;
   error: string;
+  alert: AlertProps;
 }
 
 export class RecipesPage extends Component<ComponentProps, State> {
-  state: State = { recipes: [], isLoaded: false, error: "" };
+  state: State = {
+    recipes: [],
+    isLoaded: false,
+    error: "",
+    alert: { type: "d-none", message: "" },
+  };
 
   componentDidMount() {
     if (!this.props.jwt) {
-      this.setState({ error: "Missing jwt" });
+      this.setState({
+        alert: { type: "alert-danger", message: "Precisa de se registar para ver as receitas!" },
+        isLoaded: true,
+      });
       return;
     }
 
@@ -42,12 +52,18 @@ export class RecipesPage extends Component<ComponentProps, State> {
             recipes: jsonRes.data,
             isLoaded: true,
           });
+
+          if (jsonRes.data.length === 0) {
+            this.setState({
+              alert: { type: "alert-warning", message: "Nenhuma receita encontrada" },
+            });
+          }
         }
       });
   }
 
   render() {
-    const { recipes, isLoaded, error } = this.state;
+    const { recipes, isLoaded, error, alert } = this.state;
     if (error) {
       return <div>Erro: {error}</div>;
     } else if (!isLoaded) {
@@ -56,6 +72,9 @@ export class RecipesPage extends Component<ComponentProps, State> {
       return (
         <Fragment>
           <h2>Receitas</h2>
+          <hr />
+          <Alert type={alert.type} message={alert.message} />
+
           <div className="list-group">
             {recipes.map((recipe) => (
               <Link

@@ -1,5 +1,5 @@
 export interface Props {
-  type?: "alert-success" | "alert-danger" | "d-none";
+  type?: "alert-success" | "alert-warning" | "alert-danger" | "d-none";
   message: string;
 }
 
