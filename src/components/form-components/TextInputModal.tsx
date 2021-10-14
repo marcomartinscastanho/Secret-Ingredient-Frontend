@@ -2,6 +2,10 @@ import { ChangeEvent } from "react";
 import { Button, Form, FormGroup, Modal } from "react-bootstrap";
 
 interface Props {
+  title: string;
+  id: string;
+  name: string;
+  placeholder: string;
   show: boolean;
   value: string;
   handleSave: () => void;
@@ -9,23 +13,23 @@ interface Props {
   handleCancel: () => void;
 }
 
-export const NewIngredientModal = (props: Props) => {
+export const TextInputModal = (props: Props) => {
   return (
     <Modal show={props.show} onHide={props.handleCancel} centered>
       <Form method="POST">
         <Modal.Header>
-          <Modal.Title>Criar novo Ingrediente</Modal.Title>
+          <Modal.Title>{props.title}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <FormGroup>
             <input
               type="text"
               className="form-control"
-              id="new-ingredient"
-              name="newIngredient"
+              id={props.id}
+              name={props.name}
               value={props.value}
               onChange={props.handleChange}
-              placeholder="Nome do novo ingrediente"
+              placeholder={props.placeholder}
             />
           </FormGroup>
         </Modal.Body>

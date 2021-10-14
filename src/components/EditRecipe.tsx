@@ -11,7 +11,7 @@ import {
   TagOutputDto,
 } from "../types/dtos.type";
 import "./EditRecipe.css";
-import { NewIngredientModal } from "./form-components/NewIngredientModal";
+import { TextInputModal } from "./form-components/TextInputModal";
 import { NumberInput } from "./form-components/NumberInput";
 import { PreparationStepsInput } from "./form-components/PreparationStepsInput";
 import { RecipeIngredientsInput } from "./form-components/RecipeIngredientsInput";
@@ -504,8 +504,12 @@ export class EditRecipe extends Component<Props, State> {
         </form>
 
         {/* Modals */}
-        <NewIngredientModal
+        <TextInputModal
           show={this.state.newIngredient.show}
+          title="Criar novo Ingrediente"
+          id="new-ingredient"
+          name="newIngredient"
+          placeholder="Nome do novo ingrediente"
           value={this.state.newIngredient.name}
           handleSave={this.handleCreateNewIngredient}
           handleChange={this.handleChangeNewIngredientName}
