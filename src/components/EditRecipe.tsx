@@ -93,6 +93,12 @@ export class EditRecipe extends Component<Props, State> {
   }
 
   componentDidMount() {
+    // If the user is not logged in, can't access this page
+    if (!this.props.jwt) {
+      this.props.history.push({ pathname: "/login" });
+      return;
+    }
+
     this.getIngredients();
     this.getTags();
 

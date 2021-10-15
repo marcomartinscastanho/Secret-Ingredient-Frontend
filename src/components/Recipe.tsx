@@ -47,6 +47,12 @@ export class Recipe extends Component<Props, State> {
   };
 
   componentDidMount() {
+    // If the user is not logged in, can't access this page
+    if (!this.props.jwt) {
+      this.props.history.push({ pathname: "/login" });
+      return;
+    }
+
     const headers = new Headers();
     headers.append("Authorization", "Bearer " + this.props.jwt);
 

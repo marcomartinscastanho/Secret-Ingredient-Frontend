@@ -26,8 +26,9 @@ export class Admin extends Component<Props, State> {
   state: State = { recipes: [], isLoaded: false, error: "" };
 
   componentDidMount() {
+    // If the user is not logged in, can't access this page
     if (!this.props.jwt) {
-      this.setState({ error: "Missing jwt" });
+      this.props.history.push({ pathname: "/login" });
       return;
     }
 
