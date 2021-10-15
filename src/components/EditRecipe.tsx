@@ -101,15 +101,11 @@ export class EditRecipe extends Component<Props, State> {
     };
 
     this.handleChange = this.handleChange.bind(this);
-    this.handleAddIngredient = this.handleAddIngredient.bind(this);
-    this.handleRemoveIngredient = this.handleRemoveIngredient.bind(this);
     this.handleChangeIngredient = this.handleChangeIngredient.bind(this);
     this.showNewIngredientModal = this.showNewIngredientModal.bind(this);
     this.hideNewIngredientModal = this.hideNewIngredientModal.bind(this);
     this.handleChangeNewIngredientName = this.handleChangeNewIngredientName.bind(this);
     this.handleCreateNewIngredient = this.handleCreateNewIngredient.bind(this);
-    this.handleAddPreparationStep = this.handleAddPreparationStep.bind(this);
-    this.handleRemovePreparationStep = this.handleRemovePreparationStep.bind(this);
     this.handleChangePreparationStep = this.handleChangePreparationStep.bind(this);
     this.handleChangeTags = this.handleChangeTags.bind(this);
     this.handleCreateTag = this.handleCreateTag.bind(this);
@@ -205,7 +201,7 @@ export class EditRecipe extends Component<Props, State> {
         (ingredient) =>
           ingredient.quantity !== "" ||
           ingredient.ingredientId !== "" ||
-          ingredient.specification !== ""
+          (ingredient.specification !== undefined && ingredient.specification !== "")
       ),
       preparationSteps: this.state.recipe.preparationSteps.filter((step) => step !== ""),
     };
@@ -245,7 +241,7 @@ export class EditRecipe extends Component<Props, State> {
         (ingredient) =>
           ingredient.quantity !== "" ||
           ingredient.ingredientId !== "" ||
-          ingredient.specification !== ""
+          (ingredient.specification !== undefined && ingredient.specification !== "")
       ),
       preparationSteps: this.state.recipe.preparationSteps.filter((step) => step !== ""),
     };
@@ -281,38 +277,6 @@ export class EditRecipe extends Component<Props, State> {
     }));
   };
 
-  handleAddIngredient = () => {
-    const thereAreEmptyIngredients = this.state.recipe.ingredients.some(
-      (recipeIngredient) => !recipeIngredient.quantity || !recipeIngredient.ingredientId
-    );
-
-    if (thereAreEmptyIngredients) {
-      // can't add more ingredients while there are empty ingredients
-      // TODO: give feedback to the user
-      return;
-    }
-
-    this.setState((prevState) => ({
-      recipe: {
-        ...prevState.recipe,
-        ingredients: [...prevState.recipe.ingredients, newRecipeIngredient()],
-      },
-    }));
-  };
-
-  handleRemoveIngredient = (index: number) => {
-    this.setState((prevState) => {
-      const newIngredients = prevState.recipe.ingredients;
-      newIngredients.splice(index, 1);
-      return {
-        recipe: {
-          ...prevState.recipe,
-          ingredients: [...newIngredients],
-        },
-      };
-    });
-  };
-
   handleChangeIngredient = (event: any, index: number) => {
     const { name, value } = event.target;
 
@@ -320,7 +284,42 @@ export class EditRecipe extends Component<Props, State> {
     const updatedIngredients = [...updatedRecipe.ingredients];
     const updatedIngredient = updatedIngredients[index];
     updatedIngredients[index] = { ...updatedIngredient, [name]: value };
-    updatedRecipe.ingredients = updatedIngredients;
+
+    // if all ingredient rows are filled, add a new row at the end
+    if (
+      updatedIngredients.every((recipeIngredient) => {
+        return recipeIngredient.quantity !== "" && recipeIngredient.ingredientId !== "";
+      })
+    ) {
+      updatedIngredients.push(newRecipeIngredient());
+    }
+
+    // prune consecutive empty rows
+    updatedRecipe.ingredients = updatedIngredients.filter((currentIngredient, i, arr) => {
+      // Always keep the 0th element as there is nothing before it
+      if (i === 0) {
+        return true;
+      }
+      const previousIngredient = arr[i - 1];
+      // Then check if both the current element and the one before are empty
+      return (
+        currentIngredient.quantity !== "" ||
+        currentIngredient.ingredientId !== "" ||
+        currentIngredient.specification ||
+        previousIngredient.quantity !== "" ||
+        previousIngredient.ingredientId !== "" ||
+        previousIngredient.specification
+      );
+    });
+
+    let prevIngredient: RecipeIngredientInputDto | undefined = undefined;
+    for (const recipeIngredient of updatedIngredients) {
+      if (prevIngredient === undefined) {
+        prevIngredient = recipeIngredient;
+        continue;
+      }
+    }
+
     this.setState({ recipe: updatedRecipe });
   };
 
@@ -387,41 +386,27 @@ export class EditRecipe extends Component<Props, State> {
       });
   };
 
-  handleAddPreparationStep = () => {
-    const thereAreEmptySteps = this.state.recipe.preparationSteps.some((step) => step.length === 0);
-
-    if (thereAreEmptySteps) {
-      // can't add more preparationSteps while there are empty preparationSteps
-      // TODO: give feedback to the user
-      return;
-    }
-
-    this.setState((prevState) => ({
-      recipe: {
-        ...prevState.recipe,
-        preparationSteps: [...prevState.recipe.preparationSteps, ""],
-      },
-    }));
-  };
-
-  handleRemovePreparationStep = (index: number) => {
-    this.setState((prevState) => {
-      const newPreparationSteps = prevState.recipe.preparationSteps;
-      newPreparationSteps.splice(index, 1);
-      return {
-        recipe: {
-          ...prevState.recipe,
-          preparationSteps: [...newPreparationSteps],
-        },
-      };
-    });
-  };
-
   handleChangePreparationStep = (event: any, index: number) => {
     const updatedRecipe = { ...this.state.recipe };
     const updatedSteps = [...updatedRecipe.preparationSteps];
     updatedSteps[index] = event.target.value;
-    updatedRecipe.preparationSteps = updatedSteps;
+
+    // if all preparation steps are filled, add a new row at the end
+    if (updatedSteps.every((step) => step !== "")) {
+      updatedSteps.push("");
+    }
+
+    // prune consecutive empty rows
+    updatedRecipe.preparationSteps = updatedSteps.filter((currentStep, i, arr) => {
+      // Always keep the 0th element as there is nothing before it
+      if (i === 0) {
+        return true;
+      }
+      const previousStep = arr[i - 1];
+      // Then check if both the current element and the one before are empty
+      return currentStep !== "" || previousStep !== "";
+    });
+
     this.setState({ recipe: updatedRecipe });
   };
 
@@ -550,16 +535,12 @@ export class EditRecipe extends Component<Props, State> {
           <RecipeIngredientsInput
             recipeIngredients={recipe.ingredients}
             options={ingredients}
-            onAddIngredient={this.handleAddIngredient}
             onChangeIngredient={this.handleChangeIngredient}
-            onRemoveIngredient={this.handleRemoveIngredient}
             onCreateNewIngredient={this.showNewIngredientModal}
           />
           <PreparationStepsInput
             steps={recipe.preparationSteps}
-            onAddStep={this.handleAddPreparationStep}
             onChangeStep={this.handleChangePreparationStep}
-            onRemoveStep={this.handleRemovePreparationStep}
           />
           <NumberInput
             title="Tempo de Preparação"

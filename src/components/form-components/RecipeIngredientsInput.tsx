@@ -4,9 +4,7 @@ import { IngredientOutputDto, RecipeIngredientInputDto } from "../../types/dtos.
 interface Props {
   recipeIngredients: RecipeIngredientInputDto[];
   options: IngredientOutputDto[];
-  onAddIngredient: () => void;
   onChangeIngredient: (event: ChangeEvent, index: number) => void;
-  onRemoveIngredient: (index: number) => void;
   onCreateNewIngredient: (index: number) => void;
 }
 
@@ -17,8 +15,8 @@ export const RecipeIngredientsInput = (props: Props) => {
         Ingredientes
       </label>
       {props.recipeIngredients.map((recipeIngredient, index) => (
-        <div className="row mb-3">
-          <div className="col-sm-2">
+        <div className="row mb-2">
+          <div className="col-sm-3">
             <input
               type="text"
               className="form-control"
@@ -33,7 +31,7 @@ export const RecipeIngredientsInput = (props: Props) => {
             />
           </div>
 
-          <div className="col-sm-1 d-flex align-items-center justify-content-center">de</div>
+          <div className="col d-flex align-items-center justify-content-center">de</div>
 
           <div className="col-sm-4">
             <select
@@ -46,7 +44,7 @@ export const RecipeIngredientsInput = (props: Props) => {
                 props.onChangeIngredient(event, index);
               }}
             >
-              <option>Seleccione o Ingrediente</option>
+              <option value="">Seleccione o Ingrediente</option>
               {props.options.map((ingredient) => (
                 <option value={ingredient.id}>{ingredient.name}</option>
               ))}
@@ -76,20 +74,6 @@ export const RecipeIngredientsInput = (props: Props) => {
               }}
             />
           </div>
-          {index === props.recipeIngredients.length - 1 && (
-            <div className="col-sm-1 text-end">
-              <div className="btn btn-primary" onClick={props.onAddIngredient}>
-                <strong>&#65291;</strong>
-              </div>
-            </div>
-          )}
-          {index < props.recipeIngredients.length - 1 && (
-            <div className="col-sm-1 text-end">
-              <button className="btn btn-danger" onClick={() => props.onRemoveIngredient(index)}>
-                <strong>&#10005;</strong>
-              </button>
-            </div>
-          )}
         </div>
       ))}
     </div>
