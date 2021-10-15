@@ -184,7 +184,7 @@ export class Recipe extends Component<Props, State> {
 
           <hr />
 
-          <div className="d-flex justify-content-center mb-5">
+          <div className="d-flex justify-content-center">
             <button className="btn btn-primary">Imprimir</button>
             <Link to={`/recipe/edit/${recipe.id}`} className="btn btn-warning ms-2">
               Editar

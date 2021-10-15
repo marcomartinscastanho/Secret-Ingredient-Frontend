@@ -52,7 +52,7 @@ export class App extends Component<{}, State> {
 
     return (
       <Router>
-        <div className="container">
+        <div className="container mb-5">
           <div className="row">
             <div className="col mt-3">
               <h1 className="mt-3">Ingrediente Secreto</h1>
