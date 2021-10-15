@@ -4,6 +4,7 @@ import { RouteComponentProps } from "react-router";
 import { Link } from "react-router-dom";
 import { RecipeOutputDto } from "../types/dtos.type";
 import { Alert, Props as AlertProps } from "./ui-components/alert";
+import { PersonOutline, People, Timer, FormatListNumbered, FormatQuote } from "@mui/icons-material";
 
 interface Params {
   id: string;
@@ -118,75 +119,92 @@ export class Recipe extends Component<Props, State> {
     } else {
       return (
         <Fragment>
-          <h2>{recipe.title}</h2>
+          <div className="row mb-2">
+            <h2 className="col">{recipe.title}</h2>
 
-          <div className="float-start">
-            <small>{recipe.portions} porções</small>
+            <div className="col d-flex align-items-center justify-content-end">
+              {recipe.tags.map((tag, index) => (
+                <Link to={`/tags/${tag.id}`} className="btn badge bg-success me-1" key={index}>
+                  {tag.name}
+                </Link>
+              ))}
+            </div>
           </div>
-          <div className="float-end">
-            {recipe.tags.map((tag, index) => (
-              <span className="badge bg-secondary me-1" key={index}>
-                {tag.name}
-              </span>
-            ))}
+
+          <div className="text-muted d-flex align-items-center justify-content-around">
+            <small>
+              <FormatListNumbered className="me-2" />
+              {recipe.preparationSteps.length} passos
+            </small>
+            <small>
+              {/* FIXME: lacking good icons for preparation and cooking times, we merge them for now */}
+              <Timer className="me-2" />
+              {recipe.preparationTime + recipe.cookingTime} minutos
+            </small>
+            <small>
+              <People className="me-2" />
+              {recipe.portions} porções
+            </small>
+            <small>
+              <PersonOutline className="me-2" />
+              por <i>Marco Castanho</i> {/* FIXME: placeholder for the name of the author */}
+            </small>
           </div>
-          <div className="clearfix"></div>
-          <hr />
+          <hr className="mt-1 mb-4" />
 
           <Alert type={alert.type} message={alert.message} />
 
-          <table className="table table-compact table-striped">
-            <thead></thead>
-            <tbody>
-              <tr>
-                <td>
-                  <strong>Descrição</strong>
-                </td>
-                <td>{recipe.description}</td>
-              </tr>
-              <tr>
-                <td>
-                  <strong>Tempo de preparação</strong>
-                </td>
-                <td>{recipe.preparationTime}</td>
-              </tr>
-              <tr>
-                <td>
-                  <strong>Tempo de cozedura</strong>
-                </td>
-                <td>{recipe.cookingTime}</td>
-              </tr>
-            </tbody>
-          </table>
+          <div className="row mb-4">
+            <div className="col-md-1 px-0 d-flex justify-content-end">
+              <FormatQuote className="text-muted" />
+            </div>
+            <p className="text-muted col-md-10 px-0 pt-2">{recipe.description}</p>
+            <div className="col-md-1 px-0 d-flex align-items-end">
+              <FormatQuote className="text-muted" />
+            </div>
+          </div>
 
-          <h3>Ingredientes</h3>
-          <table className="table table-compact table-striped">
-            <thead></thead>
-            <tbody>
-              {recipe.ingredients.map((recipeIngredient, index) => (
-                <tr key={index}>
-                  <td>
-                    {recipeIngredient.quantity} de{" "}
-                    <strong>{recipeIngredient.ingredient.name}</strong>{" "}
-                    {recipeIngredient.specification}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <div className="row">
+            <div className="col-md-5">
+              <h3 className="mb-3">Ingredientes</h3>
+              <table className="table table-compact">
+                <thead></thead>
+                <tbody>
+                  {recipe.ingredients.map((recipeIngredient, index) => (
+                    <tr key={index}>
+                      <td>
+                        {recipeIngredient.quantity} de <u>{recipeIngredient.ingredient.name}</u>{" "}
+                        {recipeIngredient.specification}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="col-md-7">
+              <h3 className="mb-3">Preparação</h3>
+              <table className="table table-compact">
+                <thead></thead>
+                <tbody>
+                  {recipe.preparationSteps.map((step, index) => (
+                    <tr key={index}>
+                      <td>{index + 1}</td>
+                      <td>{step}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
 
-          <h3>Preparação</h3>
-          <table className="table table-compact table-striped">
-            <thead></thead>
-            <tbody>
-              {recipe.preparationSteps.map((step, index) => (
-                <tr key={index}>
-                  <td>{index + 1}</td>
-                  <td>{step}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          {/* TODO: similar recipes
+            Implies creating a new GET /recipes/:id/similar
+            That gets all public recipes + all user recipes
+            then, for each
+            calculates an index of similarity (#tags + #ingredients in common, e.g.)
+            sorts them by that metric
+            and returns the top x (like 4 is enough)
+          */}
 
           <hr />
 
