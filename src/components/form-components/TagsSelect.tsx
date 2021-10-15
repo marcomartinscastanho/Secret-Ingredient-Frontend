@@ -1,6 +1,7 @@
 import { TagOption, TagOutputDto } from "../../types/dtos.type";
 import CreatableSelect from "react-select/creatable";
 import { ActionMeta, OnChangeValue } from "react-select";
+import "./Select.css";
 
 interface Props {
   value?: TagOption[];
