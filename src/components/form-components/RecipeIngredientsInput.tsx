@@ -1,11 +1,18 @@
 import { ChangeEvent } from "react";
-import { IngredientOutputDto, RecipeIngredientInputDto } from "../../types/dtos.type";
+import { createFilter, OnChangeValue } from "react-select";
+import CreatableSelect from "react-select/creatable";
+import {
+  IngredientOutputDto,
+  RecipeIngredientOutputDto,
+  SelectOption,
+} from "../../types/dtos.type";
 
 interface Props {
-  recipeIngredients: RecipeIngredientInputDto[];
+  recipeIngredients: RecipeIngredientOutputDto[];
   options: IngredientOutputDto[];
-  onChangeIngredient: (event: ChangeEvent, index: number) => void;
-  onCreateNewIngredient: (index: number) => void;
+  onChangeIngredient: (event: ChangeEvent, recipeIngredientIndex: number) => void;
+  onSelectIngredient: (newValue: OnChangeValue<SelectOption, false>, index: number) => void;
+  onCreateOption: (name: string, recipeIngredientIndex: number) => void;
 }
 
 export const RecipeIngredientsInput = (props: Props) => {
@@ -34,30 +41,25 @@ export const RecipeIngredientsInput = (props: Props) => {
           <div className="col d-flex align-items-center justify-content-center">de</div>
 
           <div className="col-sm-4">
-            <select
-              className="form-select"
+            <CreatableSelect
               id={`ingredient.ingredient-${index}`}
-              name={`ingredientId`}
-              key={index}
-              value={recipeIngredient.ingredientId}
-              onChange={(event) => {
-                props.onChangeIngredient(event, index);
+              name="ingredient"
+              value={{
+                value: recipeIngredient.ingredient.id,
+                label: recipeIngredient.ingredient.name,
               }}
-            >
-              <option value="">Seleccione o Ingrediente</option>
-              {props.options.map((ingredient) => (
-                <option value={ingredient.id}>{ingredient.name}</option>
-              ))}
-              <option
-                value={-1}
-                style={{ backgroundColor: "lightblue" }}
-                onClick={() => {
-                  props.onCreateNewIngredient(index);
-                }}
-              >
-                Criar novo Ingrediente...
-              </option>
-            </select>
+              onChange={(newValue) => props.onSelectIngredient(newValue, index)}
+              onCreateOption={(inputValue) => props.onCreateOption(inputValue, index)}
+              options={props.options.map((ingredient) => ({
+                value: ingredient.id,
+                label: ingredient.name,
+              }))}
+              placeholder="Seleccione o Ingrediente" // FIXME: not working
+              formatCreateLabel={(inputValue) => {
+                return `Criar o Ingrediente "${inputValue}"`;
+              }}
+              filterOption={createFilter({ matchFrom: "start" as const })}
+            />
           </div>
 
           <div className="col-sm-4">

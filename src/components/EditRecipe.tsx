@@ -4,15 +4,14 @@ import { RouteComponentProps } from "react-router";
 import { Link } from "react-router-dom";
 import {
   IngredientOutputDto,
-  RecipeIngredientInputDto,
+  RecipeIngredientOutputDto,
   RecipeInputDto,
   RecipeOutputDto,
   RestError,
-  TagOption,
+  SelectOption,
   TagOutputDto,
 } from "../types/dtos.type";
 import "./EditRecipe.css";
-import { TextInputModal } from "./form-components/TextInputModal";
 import { NumberInput } from "./form-components/NumberInput";
 import { PreparationStepsInput } from "./form-components/PreparationStepsInput";
 import { RecipeIngredientsInput } from "./form-components/RecipeIngredientsInput";
@@ -20,7 +19,7 @@ import { TagsSelect } from "./form-components/TagsSelect";
 import { TextAreaInput } from "./form-components/TextAreaInput";
 import { TextInput } from "./form-components/TextInput";
 import { Alert, Props as AlertProps } from "./ui-components/alert";
-import { ActionMeta, OnChangeValue } from "react-select";
+import { OnChangeValue } from "react-select";
 
 interface Params {
   id: string;
@@ -34,31 +33,16 @@ export interface RouteProps extends RouteComponentProps<Params> {}
 
 interface Props extends RouteProps, ComponentProps {}
 
-interface NewIngredientState {
-  show: boolean;
-  name: string;
-  index: number;
-}
-
 interface RecipeState {
   id?: string;
-
   title: string;
-
   portions?: number;
-
-  tags: TagOption[];
-
+  tags: SelectOption[];
   description: string;
-
   preparationTime?: number;
-
   cookingTime?: number;
-
-  ingredients: RecipeIngredientInputDto[];
-
+  ingredients: RecipeIngredientOutputDto[];
   preparationSteps: string[];
-
   user?: string;
 }
 
@@ -70,7 +54,6 @@ interface State {
   error: string;
   errors: string[];
   alert: AlertProps;
-  newIngredient: NewIngredientState;
 }
 
 export class EditRecipe extends Component<Props, State> {
@@ -97,15 +80,12 @@ export class EditRecipe extends Component<Props, State> {
         type: "d-none",
         message: "",
       },
-      newIngredient: { show: false, name: "", index: -1 },
     };
 
     this.handleChange = this.handleChange.bind(this);
-    this.handleChangeIngredient = this.handleChangeIngredient.bind(this);
-    this.showNewIngredientModal = this.showNewIngredientModal.bind(this);
-    this.hideNewIngredientModal = this.hideNewIngredientModal.bind(this);
-    this.handleChangeNewIngredientName = this.handleChangeNewIngredientName.bind(this);
-    this.handleCreateNewIngredient = this.handleCreateNewIngredient.bind(this);
+    this.handleEditRecipeIngredient = this.handleEditRecipeIngredient.bind(this);
+    this.handleSelectIngredient = this.handleSelectIngredient.bind(this);
+    this.handleCreateIngredient = this.handleCreateIngredient.bind(this);
     this.handleChangePreparationStep = this.handleChangePreparationStep.bind(this);
     this.handleChangeTags = this.handleChangeTags.bind(this);
     this.handleCreateTag = this.handleCreateTag.bind(this);
@@ -178,11 +158,6 @@ export class EditRecipe extends Component<Props, State> {
           recipe: {
             ...jsonRes,
             tags: jsonRes.tags.map((tag) => ({ value: tag.id, label: tag.name })),
-            ingredients: jsonRes.ingredients.map((recipeIngredient) => ({
-              quantity: recipeIngredient.quantity,
-              ingredientId: recipeIngredient.ingredient.id,
-              specification: recipeIngredient.specification,
-            })),
           },
           isLoaded: true,
         });
@@ -197,12 +172,22 @@ export class EditRecipe extends Component<Props, State> {
     const body: RecipeInputDto = {
       ...this.state.recipe,
       tagIds: this.state.recipe.tags.map((tag) => tag.value),
-      ingredients: this.state.recipe.ingredients.filter(
-        (ingredient) =>
-          ingredient.quantity !== "" ||
-          ingredient.ingredientId !== "" ||
-          (ingredient.specification !== undefined && ingredient.specification !== "")
-      ),
+      ingredients: this.state.recipe.ingredients
+        .filter(
+          // prune empty ingredients
+          (ingredient) =>
+            ingredient.quantity !== "" ||
+            ingredient.ingredient.id !== "" ||
+            (ingredient.specification !== undefined && ingredient.specification !== "")
+        )
+        .map(
+          // convert RecipeIngredientOutputDto to RecipeIngredientInputDto
+          (recipeIngredient) => ({
+            quantity: recipeIngredient.quantity,
+            ingredientId: recipeIngredient.ingredient.id,
+            specification: recipeIngredient.specification,
+          })
+        ),
       preparationSteps: this.state.recipe.preparationSteps.filter((step) => step !== ""),
     };
 
@@ -237,12 +222,18 @@ export class EditRecipe extends Component<Props, State> {
     const body: RecipeInputDto = {
       ...this.state.recipe,
       tagIds: this.state.recipe.tags.map((tag) => tag.value),
-      ingredients: this.state.recipe.ingredients.filter(
-        (ingredient) =>
-          ingredient.quantity !== "" ||
-          ingredient.ingredientId !== "" ||
-          (ingredient.specification !== undefined && ingredient.specification !== "")
-      ),
+      ingredients: this.state.recipe.ingredients
+        .filter(
+          (ingredient) =>
+            ingredient.quantity !== "" ||
+            ingredient.ingredient.id !== "" ||
+            (ingredient.specification !== undefined && ingredient.specification !== "")
+        )
+        .map((recipeIngredient) => ({
+          quantity: recipeIngredient.quantity,
+          ingredientId: recipeIngredient.ingredient.id,
+          specification: recipeIngredient.specification,
+        })),
       preparationSteps: this.state.recipe.preparationSteps.filter((step) => step !== ""),
     };
 
@@ -277,7 +268,14 @@ export class EditRecipe extends Component<Props, State> {
     }));
   };
 
-  handleChangeIngredient = (event: any, index: number) => {
+  handleSelectIngredient = (newValue: OnChangeValue<SelectOption, false>, index: number) => {
+    if (newValue) {
+      const ingredient: IngredientOutputDto = { id: newValue.value, name: newValue.label };
+      this.handleEditRecipeIngredient({ target: { name: "ingredient", value: ingredient } }, index);
+    }
+  };
+
+  handleEditRecipeIngredient = (event: any, index: number) => {
     const { name, value } = event.target;
 
     const updatedRecipe = { ...this.state.recipe };
@@ -288,7 +286,7 @@ export class EditRecipe extends Component<Props, State> {
     // if all ingredient rows are filled, add a new row at the end
     if (
       updatedIngredients.every((recipeIngredient) => {
-        return recipeIngredient.quantity !== "" && recipeIngredient.ingredientId !== "";
+        return recipeIngredient.quantity !== "" && recipeIngredient.ingredient.id !== "";
       })
     ) {
       updatedIngredients.push(newRecipeIngredient());
@@ -304,15 +302,15 @@ export class EditRecipe extends Component<Props, State> {
       // Then check if both the current element and the one before are empty
       return (
         currentIngredient.quantity !== "" ||
-        currentIngredient.ingredientId !== "" ||
+        currentIngredient.ingredient.id !== "" ||
         currentIngredient.specification ||
         previousIngredient.quantity !== "" ||
-        previousIngredient.ingredientId !== "" ||
+        previousIngredient.ingredient.id !== "" ||
         previousIngredient.specification
       );
     });
 
-    let prevIngredient: RecipeIngredientInputDto | undefined = undefined;
+    let prevIngredient: RecipeIngredientOutputDto | undefined = undefined;
     for (const recipeIngredient of updatedIngredients) {
       if (prevIngredient === undefined) {
         prevIngredient = recipeIngredient;
@@ -323,21 +321,7 @@ export class EditRecipe extends Component<Props, State> {
     this.setState({ recipe: updatedRecipe });
   };
 
-  showNewIngredientModal = (index: number) => {
-    this.setState({ newIngredient: { show: true, name: "", index } });
-  };
-
-  hideNewIngredientModal = () => {
-    this.setState({ newIngredient: { show: false, name: "", index: -1 } });
-  };
-
-  handleChangeNewIngredientName = (event: any) => {
-    this.setState((prevState) => ({
-      newIngredient: { ...prevState.newIngredient, name: event.target.value },
-    }));
-  };
-
-  handleCreateNewIngredient = () => {
+  handleCreateIngredient = (name: string, index: number) => {
     const headers = new Headers();
     headers.append("Content-Type", "application/json");
     headers.append("Authorization", "Bearer " + this.props.jwt);
@@ -345,7 +329,7 @@ export class EditRecipe extends Component<Props, State> {
     const requestOptions = {
       method: "POST",
       headers,
-      body: JSON.stringify({ name: this.state.newIngredient.name }),
+      body: JSON.stringify({ name }),
     };
 
     fetch("http://localhost:19061/v1/ingredients", requestOptions)
@@ -360,27 +344,26 @@ export class EditRecipe extends Component<Props, State> {
 
           fetch("http://localhost:19061/v1/ingredients", { headers })
             .then((response) => {
+              // parse response to json
               if (response.status !== 200) {
                 this.setState({ error: "Invalid response code: " + response.status });
               }
               return response.json();
             })
             .then((jsonRes: { data: IngredientOutputDto[] }) => {
+              // update the list of ingredients
               this.setState({
                 ingredients: jsonRes.data,
               });
             })
             .then(() => {
-              const { index } = this.state.newIngredient;
+              // update the id of the newly created ingredient
               const updatedRecipe = { ...this.state.recipe };
               const updatedIngredients = [...updatedRecipe.ingredients];
               const updatedIngredient = updatedIngredients[index];
-              updatedIngredients[index] = { ...updatedIngredient, ingredientId: data.id };
+              updatedIngredients[index] = { ...updatedIngredient, ingredient: data };
               updatedRecipe.ingredients = updatedIngredients;
               this.setState({ recipe: updatedRecipe });
-            })
-            .then(() => {
-              this.hideNewIngredientModal();
             });
         }
       });
@@ -410,10 +393,7 @@ export class EditRecipe extends Component<Props, State> {
     this.setState({ recipe: updatedRecipe });
   };
 
-  handleChangeTags = (
-    newValue: OnChangeValue<TagOption, true>,
-    actionMeta: ActionMeta<TagOption>
-  ) => {
+  handleChangeTags = (newValue: OnChangeValue<SelectOption, true>) => {
     this.setState((prevState) => ({
       recipe: {
         ...prevState.recipe,
@@ -535,8 +515,9 @@ export class EditRecipe extends Component<Props, State> {
           <RecipeIngredientsInput
             recipeIngredients={recipe.ingredients}
             options={ingredients}
-            onChangeIngredient={this.handleChangeIngredient}
-            onCreateNewIngredient={this.showNewIngredientModal}
+            onChangeIngredient={this.handleEditRecipeIngredient}
+            onSelectIngredient={this.handleSelectIngredient}
+            onCreateOption={this.handleCreateIngredient}
           />
           <PreparationStepsInput
             steps={recipe.preparationSteps}
@@ -586,20 +567,6 @@ export class EditRecipe extends Component<Props, State> {
           </div>
         </form>
 
-        {/* Modals */}
-        {/* New Ingredient Modal */}
-        <TextInputModal
-          show={this.state.newIngredient.show}
-          title="Criar novo Ingrediente"
-          id="new-ingredient"
-          name="newIngredient"
-          placeholder="Nome do novo ingrediente"
-          value={this.state.newIngredient.name}
-          handleSave={this.handleCreateNewIngredient}
-          handleChange={this.handleChangeNewIngredientName}
-          handleCancel={this.hideNewIngredientModal}
-        />
-
         <div className="mt-3">
           <pre>{JSON.stringify(this.state, null, 3)}</pre>
         </div>
@@ -608,9 +575,9 @@ export class EditRecipe extends Component<Props, State> {
   }
 }
 
-const newRecipeIngredient = (): RecipeIngredientInputDto => {
+const newRecipeIngredient = (): RecipeIngredientOutputDto => {
   return {
-    ingredientId: "",
+    ingredient: { id: "", name: "" },
     quantity: "",
   };
 };

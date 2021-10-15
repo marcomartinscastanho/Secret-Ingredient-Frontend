@@ -87,7 +87,7 @@ export type RestError = {
   message: string;
 };
 
-export type TagOption = {
+export type SelectOption = {
   label: string;
   value: string;
 };

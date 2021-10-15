@@ -1,13 +1,13 @@
-import { TagOption, TagOutputDto } from "../../types/dtos.type";
+import { SelectOption, TagOutputDto } from "../../types/dtos.type";
 import CreatableSelect from "react-select/creatable";
 import { ActionMeta, OnChangeValue } from "react-select";
 import "./Select.css";
 
 interface Props {
-  value?: TagOption[];
+  value?: SelectOption[];
   handleChange?: (
-    newValue: OnChangeValue<TagOption, true>,
-    actionMeta: ActionMeta<TagOption>
+    newValue: OnChangeValue<SelectOption, true>,
+    actionMeta: ActionMeta<SelectOption>
   ) => void;
   handleCreateOption?: (newTag: string) => void;
   options: TagOutputDto[];
