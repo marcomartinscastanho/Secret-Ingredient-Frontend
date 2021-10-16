@@ -39,16 +39,20 @@ export class IngredientsPage extends Component<{}, State> {
           <h2>Ingredientes</h2>
 
           <div className="list-group">
-            {ingredients.map((ingredient) => (
-              <Link
-                key={ingredient.id}
-                to={`/ingredients/${ingredient.id}`}
-                className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-              >
-                {ingredient.name}
-                <span className="badge bg-secondary rounded-pill">{ingredient.popularity}</span>
-              </Link>
-            ))}
+            {ingredients
+              .filter((ingredient) => ingredient.popularity && ingredient.popularity > 0)
+              .map((ingredient) => (
+                <Link
+                  key={ingredient.id}
+                  to={`/ingredients/${ingredient.id}`}
+                  className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+                >
+                  {ingredient.name}
+                  <span className="badge bg-secondary rounded-pill">
+                    {ingredient.popularity} receita{ingredient.popularity === 1 ? "" : "s"}
+                  </span>
+                </Link>
+              ))}
           </div>
         </Fragment>
       );

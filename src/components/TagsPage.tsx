@@ -39,16 +39,20 @@ export class TagsPage extends Component<{}, State> {
           <h2>Etiquetas</h2>
 
           <div className="list-group">
-            {tags.map((tag) => (
-              <Link
-                key={tag.id}
-                to={`/tags/${tag.id}`}
-                className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-              >
-                {tag.name}
-                <span className="badge bg-secondary rounded-pill">{tag.popularity}</span>
-              </Link>
-            ))}
+            {tags
+              .filter((tag) => tag.popularity && tag.popularity > 0)
+              .map((tag) => (
+                <Link
+                  key={tag.id}
+                  to={`/tags/${tag.id}`}
+                  className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+                >
+                  {tag.name}
+                  <span className="badge bg-secondary rounded-pill">
+                    {tag.popularity} receita{tag.popularity === 1 ? "" : "s"}
+                  </span>
+                </Link>
+              ))}
           </div>
         </Fragment>
       );
