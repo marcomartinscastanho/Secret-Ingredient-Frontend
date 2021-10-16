@@ -110,6 +110,9 @@ export class EditRecipe extends Component<Props, State> {
     }
   }
 
+  //FIXME: if the user click on New Recipe while on this page, nothing will happen
+  // to fix this, use componentDidUpdate() just like in Recipe.tsx
+
   getIngredients() {
     // get list of ingredients
     const headers = new Headers();

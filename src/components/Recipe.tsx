@@ -49,6 +49,42 @@ export class Recipe extends Component<Props, State> {
   };
 
   componentDidMount() {
+    this.getRecipe();
+  }
+
+  // alternatively
+  //   useEffect(() => {
+  //     // do something
+  // }, [props.match.params.id]);
+  componentDidUpdate(prevProps: Props) {
+    // if the user decided to see another recipe, get it
+    if (prevProps.match.params.id !== this.props.match.params.id) {
+      this.setState({
+        recipe: {
+          id: "",
+          title: "",
+          portions: 0,
+          tags: [],
+          description: "",
+          cookingTime: 0,
+          preparationTime: 0,
+          ingredients: [],
+          preparationSteps: [],
+          user: "",
+        },
+        isLoaded: false,
+        error: "",
+        alert: {
+          type: "d-none",
+          message: "",
+        },
+      });
+
+      this.getRecipe();
+    }
+  }
+
+  getRecipe() {
     // If the user is not logged in, can't access this page
     if (!this.props.jwt) {
       this.props.history.push({ pathname: "/login" });
