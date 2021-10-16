@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { RecipeOutputDto } from "../types/dtos.type";
 import { Alert, Props as AlertProps } from "./ui-components/alert";
 import { PersonOutline, People, Timer, FormatListNumbered, FormatQuote } from "@mui/icons-material";
+import { RecipeCard } from "./ui-components/recipe-card";
 
 interface Params {
   id: string;
@@ -166,7 +167,7 @@ export class Recipe extends Component<Props, State> {
             </div>
           </div>
 
-          <div className="row">
+          <div className="row mb-5">
             <div className="col-md-5">
               <h3 className="mb-3">Ingredientes</h3>
               <table className="table table-compact">
@@ -207,7 +208,17 @@ export class Recipe extends Component<Props, State> {
             sorts them by that metric
             and returns the top x (like 4 is enough)
           */}
-
+          {/* example */}
+          <h3 className="mb-3">Receitas Semelhantes</h3>
+          <div className="row">
+            <RecipeCard
+              id="6168c2e035b6fa79a7b52499"
+              title="Rodízio de Pipi"
+              description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+              preparationSteps={2}
+              preparationTime={20}
+            />
+          </div>
           <hr />
 
           <div className="d-flex justify-content-center">
