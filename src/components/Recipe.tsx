@@ -38,7 +38,7 @@ export class Recipe extends Component<Props, State> {
       preparationTime: 0,
       ingredients: [],
       preparationSteps: [],
-      user: "",
+      owner: { id: "", name: "" },
     },
     isLoaded: false,
     error: "",
@@ -58,7 +58,11 @@ export class Recipe extends Component<Props, State> {
   // }, [props.match.params.id]);
   componentDidUpdate(prevProps: Props) {
     // if the user decided to see another recipe, get it
-    if (prevProps.match.params.id !== this.props.match.params.id) {
+    if (
+      prevProps &&
+      prevProps.match.params.id &&
+      prevProps.match.params.id !== this.props.match.params.id
+    ) {
       this.setState({
         recipe: {
           id: "",
@@ -70,7 +74,7 @@ export class Recipe extends Component<Props, State> {
           preparationTime: 0,
           ingredients: [],
           preparationSteps: [],
-          user: "",
+          owner: { id: "", name: "" },
         },
         isLoaded: false,
         error: "",
@@ -186,7 +190,7 @@ export class Recipe extends Component<Props, State> {
             </small>
             <small>
               <PersonOutline className="me-2" />
-              por <i>Marco Castanho</i> {/* FIXME: placeholder for the name of the author */}
+              por <i>{recipe.owner.name}</i>
             </small>
           </div>
           <hr className="mt-1 mb-4" />

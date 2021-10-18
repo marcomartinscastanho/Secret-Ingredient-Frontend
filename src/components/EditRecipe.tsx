@@ -43,7 +43,7 @@ interface RecipeState {
   cookingTime?: number;
   ingredients: RecipeIngredientOutputDto[];
   preparationSteps: string[];
-  user?: string;
+  owner?: any;
 }
 
 interface State {

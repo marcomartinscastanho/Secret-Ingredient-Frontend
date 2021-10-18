@@ -39,7 +39,13 @@ export type RecipeOutputDto = {
 
   preparationSteps: string[];
 
-  user: string;
+  owner: RecipeOwnerOutputDto;
+};
+
+export type RecipeOwnerOutputDto = {
+  id: string;
+
+  name: string;
 };
 
 export type TagInputDto = {
